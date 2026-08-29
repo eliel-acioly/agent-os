@@ -1,80 +1,163 @@
-﻿# 🛰️ Agent-OS: Autonomous Enterprise Operating System (SOTA 2026)
+﻿# Agent-OS: Sistema Operacional Modular para Engenharia de Software Orientada a Agentes
 
-> **Architectural Standard:** NASA / SpaceX / Palantir Aerospace Engineering Standard + SOTA Direct Response Agency  
-> **Operational Paradigm:** Single Human CTO + 18 Autonomous Specialized AI Agents  
-> **Lifecycle Coverage:** Da Ideia Inicial ao Software em Produção, Design SOTA, Vendas, Campanhas e Auto-Evolução  
-> **Scientific Epistemology:** Falsificabilidade Popperiana, Red Teaming Adversarial e Escudo Anti-Viés Cognitivo  
-> **Official Repository:** [https://github.com/eliel-acioly/agent-os](https://github.com/eliel-acioly/agent-os)
+> **Definição Técnica:** Framework de orquestração multiagente, governança de contratos de dados (SSOT) e automação do ciclo de vida de desenvolvimento de software (SDLC).  
+> **Repositório Oficial:** [https://github.com/eliel-acioly/agent-os](https://github.com/eliel-acioly/agent-os)  
+> **Padrão de Governança:** Spec-Driven Development, Tipagem Estrita, Análise Topológica de AST e Falsificabilidade Empírica.
 
 ---
 
-## 🗺️ Visão Geral Executiva
+## 1. Problema de Engenharia
 
-O **Agent-OS** é o primeiro **Sistema Operacional de Agência & Empresa Autônoma** que une o rigor de engenharia da NASA/SpaceX com a agressividade comercial e estética do Vale do Silício.
+Modelos de linguagem aplicados à engenharia de software frequentemente falham em bases de código de média e alta complexidade devido a quatro fatores estruturais:
 
-Diferente de frameworks acadêmicos que só geram protótipos de brinquedo ou assistentes de chat soltos que sofrem de alucinações e vieses cognitivos, o Agent-OS opera sob **Epistemologia Científica Rigorosa**:
-1. **Pesquisa SOTA Contínua:** Varredura autônoma de repositórios, benchmarks e literatura acadêmica.
-2. **Escudo Anti-Viés Cognitivo:** Rejeição matemática de *Confirmation Bias*, *Hype/Cargo Culting* e *Sycophancy*.
-3. **Red Teaming Adversarial:** Toda melhoria enfrenta o `@DevilAdvocate` antes de ser aceita.
-4. **Falsificabilidade Popperiana:** Nenhuma tese é adotada sem teste quantitativo de rejeição ($H_0$).
-5. **Venture Engine Turnkey:** Cria negócios do zero a software e vendas em minutos.
+1. **Deriva de Escopo (Product Drift):** Agentes introduzem componentes, tabelas e funcionalidades não autorizados pelas especificações formais.
+2. **Fragmentação de Contratos:** Frontend, Backend e Banco de Dados utilizam modelos de dados dessincronizados, gerando falhas em tempo de execução.
+3. **Explosão de Contexto e Alucinação:** LLMs sem mapeamento estrutural de dependências tentam inferir o comportamento de todo o repositório, inventando métodos e tipos inexistentes.
+4. **Vieses Cognitivos em Auto-Avaliação:** Agentes tendem a avaliar o próprio código como correto mesmo sob condições de concorrência (*race conditions*), vazamentos de recursos ou quebras de contrato.
+
+O **Agent-OS** resolve esses problemas restringindo a autonomia dos agentes a uma **Máquina de Estados Finita (FSM)** e a uma **Hierarquia de Governança Estrita**.
 
 ---
 
-## 🏛️ Os 6 Departamentos & 18 Agentes Especialistas
+## 2. A Hierarquia Canônica de Governança (11 Elos)
+
+O código nunca define os requisitos. Toda linha de código de produção deve possuir rastreabilidade descendente completa:
 
 ```text
-                               AGENT-OS
-                    AUTONOMOUS ENTERPRISE PLATFORM
-                                  │
-    ┌──────────────┬──────────────┼──────────────┬──────────────┐
-    ▼              ▼              ▼              ▼              ▼
- ESTRATÉGIA     DESIGN        ENGENHARIA        QA & CAOS     CRESCIMENTO
- & NEGÓCIO    EXPERIÊNCIA      SISTEMAS       AUTO-CURA        E RECEITA
-(@Orchestrator  (@UI Design    (@Contracts     (@Debugger     (@Copywriter
- @Product        @UX Research)  @Backend        @QA Chaos      @Growth
- @MarketResearch)               @Database       @Security      @Sales
-                                @AI_Edge        @Master)       @Monetization)
-                                @Gateway)
+1. IDENTIDADE DO SISTEMA       -> Limites e escopo do software
+2. CONSTITUIÇÃO FORMAL         -> Invariantes e regras invioláveis de engenharia
+3. ONTOLOGIA                   -> Catálogo canônico de entidades e relações de domínio
+4. ARQUITETURA DE REFERÊNCIA   -> Topologia de serviços, protocolos e isolamento
+5. ESPECIFICAÇÃO FORMAL (SPEC) -> Casos de uso e critérios de aceite BDD (Given-When-Then)
+6. DECISÕES DE ARQUITETURA(ADR)-> Registro formal de trade-offs técnicos
+7. CONTRATOS ÚNICOS (SSOT)     -> DTOs e interfaces tipadas (shared/contracts/)
+8. GRAFO DE DEPENDÊNCIAS (AST) -> Análise estática de callers, blast radius e centralidade
+9. AGENTES ESPECIALIZADOS      -> Execução restrita a domínios herméticos
+10. CÓDIGO DE PRODUÇÃO         -> Alterações mínimas necessárias
+11. TESTES AUTOMATIZADOS       -> Testes E2E, invariantes e testes de estresse
 ```
 
 ---
 
-## ⚡ Motores Cognitivos & Ferramentas Autônomas (`scripts/`)
+## 3. Matriz de Agentes Especializados e Jurisdições
 
-| Script / Ferramenta | Propósito de Engenharia & Negócio | Padrão / Inspiração |
-|:---|:---|:---|
-| **`scientific_researcher.py`** | **Pesquisa científica, Red Teaming adversarial e Escudo Epistêmico Anti-Viés.** | Karl Popper / MIT CSAIL |
-| **`autonomous_venture_engine.py`** | Cria uma empresa/SaaS completo do zero em 5 segundos (Ideia → Código → Vendas). | Autonomous Venture SOTA |
-| **`spec_linter.py`** | Audita specs contra os 6 critérios formais (BDD, contratos, falhas, testes). | GitHub Spec Kit / Amazon PR/FAQ |
-| **`repo_map_engine.py`** | Mapeia topologia e calcula centralidade de código (Hub Ranking em 2s). | Aider / Princeton SWE-agent |
-| **`graph_architectural_navigator.py`** | Raio de impacto multi-salto (5 hops) e gaiola anti-alucinação (*Grounding*). | Palantir Foundry / GraphRAG |
-| **`graph_of_thought_engine.py`** | Deliberação de arquitetura via grafo com bifurcação e poda formal. | ETH Zurich / DeepMind GoT |
-| **`product_drift_detector.py`** | Barreira contínua contra deriva de escopo ou código não autorizado. | Governança SOTA 2026 |
-| **`bootstrap_project.py`** | Instanciação do ecossistema completo em qualquer novo projeto em 5s. | DevX Automation |
+O sistema opera com 18 personas agrupadas em 6 departamentos funcionais. Cada agente possui jurisdição técnica exclusiva, sendo proibida a escrita em diretórios fora de seu domínio.
+
+| Departamento | Agente | Jurisdição Técnica / Responsabilidade | Artefatos Produzidos |
+|:---|:---|:---|:---|
+| **Estratégia & Produto** | `@Orchestrator` | Decomposição de tarefas em grafo direcionado e coordenação da esteira. | `HANDOFF.md`, Planos Táticos |
+| | `@Product` | Definição de requisitos e especificações funcionais baseadas em dor de negócio. | `docs/specs/SPEC-*.md` |
+| | `@MarketResearch`| Análise quantitativa de concorrência, dimensionamento de mercado e custos. | `docs/01_ESTUDO_DE_MERCADO.md` |
+| **Design & Usabilidade** | `@UI` | Interface de usuário, sistemas de design, contraste e ergonomia visual. | Componentes visuais, CSS/Tailwind |
+| | `@UX` | Arquitetura de informação, redução de etapas operacionais e carga cognitiva. | Fluxogramas, auditorias de UX |
+| **Engenharia de Sistemas** | `@Contracts` | Guardião do SSOT. Manutenção e congelamento de DTOs e interfaces públicas. | `shared/contracts/*.ts` |
+| | `@API` | Camada de serviços, controladores HTTP/REST, streaming gRPC e WebSockets. | Controladores, rotas de backend |
+| | `@DB` | Modelagem relacional, esquemas de dados e migrações determinísticas. | `src/db/schema.ts`, migrations SQL |
+| | `@AI_Edge` | Pipelines locais de visão computacional e modelos de inferência sob teto de CPU. | Workers de IA, scripts de inferência |
+| | `@Gateway` | Ingestão de telemetria, streaming de vídeo (MediaMTX) e pontes locais. | Serviços de streaming e rede |
+| **Garantia da Qualidade** | `@Debugger` | Análise forense de stack traces, teste mínimo de reprodução e patches cirúrgicos. | Testes de regressão, correções |
+| | `@Logs` | Execução de suítes de teste de integração, ponta a ponta (E2E) e cobertura. | `tests/*.ts`, relatórios de execução |
+| | `@Security` | Verificação de permissões (RBAC), sanitização de entrada e isolamento de dados. | Políticas de segurança, auditorias |
+| | `@Master` | Revisão de código, auditoria estática de conformidade e autorização de merge. | Aprovação de branches, relatórios |
+| **Comercial & Monetização** | `@Copywriter` | Documentação técnica comercial, mensagens de onboarding e propostas de valor. | Documentos de copy, páginas |
+| | `@Growth` | Estrutura de aquisição de tráfego, eventos de conversão e rastreamento. | Esquemas de tracking, métricas |
+| | `@Sales` | Roteiros técnicos para demonstração comercial e qualificação de clientes. | Scripts de demo, cadências |
+| | `@Monetization`| Modelagem de planos de assinatura, precificação por uso e margem operacional. | Configurações de planos e cotas |
 
 ---
 
-## 🔬 Como o Sistema Pesquisa e Auto-Evolui sem Vieses
+## 4. Ferramentas e Motores de Análise (`scripts/`)
 
-Para evitar cair nas armadilhas de "hype" ou autovalidação ingênua da IA, execute o crivo científico:
+O repositório disponibiliza utilitários de linha de comando para análise estática, verificação e automação de processos:
+
+### 4.1. `spec_linter.py` — Auditoria Estática de Especificações
+Verifica se um documento de especificação atende aos critérios formais de engenharia antes do início da codificação.
+- **Critérios Auditados:** Metadados canônicos, problema de negócio delimitado, contratos DTOs associados, critérios de aceite BDD (*Given-When-Then*), modos de falha e rastreabilidade para testes.
+- **Uso:**
+  ```bash
+  python scripts/spec_linter.py --file docs/specs/SPEC-CORE-001.md
+  ```
+
+### 4.2. `repo_map_engine.py` — Análise de Centralidade de Dependências
+Mapeia o grafo de dependências do repositório através da análise estática de imports e calcula a centralidade dos nós (*in-degree*).
+- **Finalidade:** Identifica os componentes centrais da arquitetura para mitigar riscos de regressão em alterações estruturais.
+- **Uso:**
+  ```bash
+  python scripts/repo_map_engine.py --dir . --top 10
+  ```
+
+### 4.3. `scientific_researcher.py` — Avaliação Epistêmica e Red Teaming
+Aplica filtros críticos contra hipóteses técnicas antes de sua implementação na base de código.
+- **Critérios de Validação:**
+  1. *Falsificabilidade:* Exigência de métricas quantitativas de rejeição (latência, memória, throughput).
+  2. *Armadilha da Complexidade:* Penalização de dependências desnecessárias.
+  3. *Red Teaming:* Identificação de riscos operacionais, consistência de cache e I/O.
+- **Uso:**
+  ```bash
+  python scripts/scientific_researcher.py \
+    --topic "Avaliação de Estratégia de Cache" \
+    --hypothesis "Uso de cache em memória reduz p95 para menos de 50ms" \
+    --metric "Latencia p95 < 50ms e consumo de RAM < 64MB" \
+    --risk LOW
+  ```
+
+### 4.4. `autonomous_venture_engine.py` — Instanciação Estruturada de Projetos
+Gera a estrutura física completa de um novo projeto a partir de uma descrição funcional delimitada, integrando contratos, esquemas de dados, backend, frontend e suíte de testes.
+- **Uso:**
+  ```bash
+  python scripts/autonomous_venture_engine.py \
+    --idea "Descrição concisa do sistema" \
+    --name "NomeDoProjeto" \
+    --target-dir ./projetos
+  ```
+
+### 4.5. `graph_architectural_navigator.py` — Raio de Impacto (Blast Radius)
+Calcula o impacto de uma alteração em até 5 saltos na árvore de dependências (Chamadores AST -> Contratos -> Especificações -> Testes).
+
+---
+
+## 5. Procedimento de Instalação e Integração
+
+### Adicionar a um Repositório Existente como Submódulo
+```bash
+git submodule add git@github.com:eliel-acioly/agent-os.git .agents
+```
+
+### Inicializar Estrutura de Governança
+```bash
+python .agents/scripts/bootstrap_project.py \
+  --target-dir . \
+  --name "NomeDoProjeto" \
+  --domain "DOMINIO_TECNICO"
+```
+
+---
+
+## 6. Verificação e Suíte de Testes
+
+Para validar a integridade dos motores e scripts do repositório:
 
 ```bash
-python .agents/scripts/scientific_researcher.py \
-  --topic "Adoção de Novo Algoritmo de Cache" \
-  --hypothesis "Implementar LRU em memória reduz p99 de 80ms para 15ms" \
-  --metric "Latência < 20ms e consumo de RAM < 128MB" \
-  --risk LOW
-```
+# Validação do linter de especificações
+python scripts/spec_linter.py --file examples/ClinicReactivator/docs/specs/SPEC-CORE-001-motor-central.md
 
-O sistema automaticamente:
-- Aplica as penalidades contra vieses de confirmação e complexidade acidental.
-- Invoca o `@DevilAdvocate` para apontar vulnerabilidades e custos ocultos.
-- Executa benchmark A/B e grava a decisão formal no livro-razão (`research/scientific_hypotheses_ledger.jsonl`).
+# Validação do mapeador topológico de repositório
+python scripts/repo_map_engine.py --dir . --top 5
+
+# Validação do laboratório de verificação científica
+python scripts/scientific_researcher.py \
+  --topic "Teste de Integridade de Cache" \
+  --hypothesis "Persistência em memória reduz tempo de acesso" \
+  --metric "Latencia < 10ms" \
+  --risk LOW
+
+# Execução do teste ponta a ponta do projeto de exemplo
+node examples/ClinicReactivator/tests/test_core_e2e.js
+```
 
 ---
 
-## 📄 Propriedade Intelectual & Padrão de Engenharia
+## 7. Licença e Governança
 
-Desenvolvido por **Eliel Acioly** — Framework Autônomo de Engenharia de Software e Agência SOTA 2026.
-Construído com base no aprendizado acumulado em missões de missão crítica e refinado sob o rigor da engenharia aeroespacial e da filosofia da ciência.
+Desenvolvido sob padrões formais de engenharia de software e análise estática.  
+Mantido por **Eliel Acioly** — 2026.
