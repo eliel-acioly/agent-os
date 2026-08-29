@@ -1,0 +1,90 @@
+{
+  "version": "2.0",
+  "description": "Métricas de desempenho por agente. Atualizado automaticamente pelo sistema de auto-melhoria.",
+  "agents": {
+    "Product": {
+      "tasks_completed": 0,
+      "tasks_blocked": 0,
+      "handoffs_issued": 0,
+      "skill_score": 100,
+      "last_active": null
+    },
+    "Security": {
+      "tasks_completed": 0,
+      "tasks_blocked": 0,
+      "handoffs_issued": 0,
+      "skill_score": 100,
+      "last_active": null
+    },
+    "DB": {
+      "tasks_completed": 0,
+      "tasks_blocked": 0,
+      "handoffs_issued": 0,
+      "skill_score": 100,
+      "last_active": null
+    },
+    "Gateway": {
+      "tasks_completed": 0,
+      "tasks_blocked": 0,
+      "handoffs_issued": 0,
+      "skill_score": 100,
+      "last_active": null
+    },
+    "API": {
+      "tasks_completed": 0,
+      "tasks_blocked": 0,
+      "handoffs_issued": 0,
+      "skill_score": 100,
+      "last_active": null
+    },
+    "AI_Edge": {
+      "tasks_completed": 0,
+      "tasks_blocked": 0,
+      "handoffs_issued": 0,
+      "skill_score": 100,
+      "last_active": null
+    },
+    "UI": {
+      "tasks_completed": 0,
+      "tasks_blocked": 0,
+      "handoffs_issued": 0,
+      "skill_score": 100,
+      "last_active": null
+    },
+    "Logs": {
+      "tasks_completed": 0,
+      "tasks_blocked": 0,
+      "handoffs_issued": 0,
+      "skill_score": 100,
+      "last_active": null
+    },
+    "Master": {
+      "tasks_completed": 0,
+      "tasks_blocked": 0,
+      "handoffs_issued": 0,
+      "skill_score": 100,
+      "last_active": null
+    },
+    "Contracts": {
+      "tasks_completed": 0,
+      "tasks_blocked": 0,
+      "handoffs_issued": 0,
+      "skill_score": 100,
+      "last_active": null
+    },
+    "Orchestrator": {
+      "tasks_completed": 0,
+      "tasks_blocked": 0,
+      "handoffs_issued": 0,
+      "skill_score": 100,
+      "last_active": null
+    },
+    "Deploy": {
+      "tasks_completed": 0,
+      "tasks_blocked": 0,
+      "handoffs_issued": 0,
+      "skill_score": 100,
+      "last_active": null
+    }
+  }
+}

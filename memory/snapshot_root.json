@@ -1,0 +1,25 @@
+{
+  "target": "root",
+  "path": "C:\\dev\\startup-AntecipIA\\03_engineering",
+  "file_counts": {
+    ".ts": -1,
+    ".tsx": -1,
+    ".py": -1,
+    ".go": -1,
+    ".proto": -1,
+    ".json": -1
+  },
+  "recent_changes": [
+    "M .agents/AGENTS.md",
+    "M .agents/skills/antecipia-ai-edge/SKILL.md",
+    "M .agents/skills/antecipia-api/SKILL.md",
+    "M .agents/skills/antecipia-db/SKILL.md",
+    "M .agents/skills/antecipia-gateway/SKILL.md",
+    "M .agents/skills/antecipia-logs/SKILL.md",
+    "M .agents/skills/antecipia-logs/scripts/check_qa_matrix.py",
+    "M .agents/skills/antecipia-master/SKILL.md",
+    "M .agents/skills/antecipia-master/scripts/validate_handoff_pipeline.py",
+    "M .agents/skills/antecipia-product/SKILL.md"
+  ],
+  "generated_at": "2026-08-18T01:39:34.703055"
+}

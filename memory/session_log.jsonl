@@ -1,0 +1,133 @@
+{"timestamp": "2026-08-18T01:25:38.238985", "agent": "Master", "event": "session_opened"}
+{"timestamp": "2026-08-18T01:26:00.512901", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 78, "total_gaps": 22}
+{"timestamp": "2026-08-18T01:26:58.975796", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 86, "total_gaps": 14}
+{"timestamp": "2026-08-18T01:27:15.643417", "agent": "Gateway", "event": "memory_written", "type": "learning", "text": "Links para arquivos reais do diretório services/antecipia-gateway/ devem ser incluídos no SKILL.md"}
+{"timestamp": "2026-08-18T01:43:08.134383", "agent": "AI_Edge", "event": "memory_written", "type": "learning", "text": "Evidential Deep Learning (EDL) pós-processa detecções YOLO quantificando incerteza epistêmica e aleatória via distribuição Dirichlet, gerando risk_flag estruturado para o RiskBuilder"}
+{"timestamp": "2026-08-18T01:43:08.354308", "agent": "AI_Edge", "event": "memory_written", "type": "learning", "text": "RAG Semântico via ChromaDB e code-review-graph devem ser consultados via session_open.py ou query_engine.py antes de alterar algoritmos de inferência"}
+{"timestamp": "2026-08-18T01:43:27.600514", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 86, "total_gaps": 14}
+{"timestamp": "2026-08-18T01:44:10.471605", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 88, "total_gaps": 11}
+{"timestamp": "2026-08-18T01:45:19.040085", "agent": "AI_Edge", "event": "rag_query", "query": "YOLO detection pipeline ByteTrack", "results_count": 2}
+{"timestamp": "2026-08-18T01:45:34.297803", "agent": "AI_Edge", "event": "rag_query", "query": "", "results_count": 3}
+{"timestamp": "2026-08-18T01:45:34.299409", "agent": "AI_Edge", "event": "session_opened"}
+{"timestamp": "2026-08-18T01:54:29.665125", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 88, "total_gaps": 11}
+{"timestamp": "2026-08-18T01:54:29.836174", "agent": "IdeaScout", "event": "research_executed", "agents_scouted": ["UI", "API", "AI_Edge", "DB", "Security", "Logs"], "rfcs_generated": 16}
+{"timestamp": "2026-08-18T01:54:34.005101", "agent": "AI_Edge", "event": "rag_query", "query": "YOLO detection", "results_count": 2}
+{"timestamp": "2026-08-18T01:54:34.337392", "agent": "all", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:34.696283", "agent": "all", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:35.006038", "agent": "all", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:35.336047", "agent": "all", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T01:54:35.638686", "agent": "all", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:35.980308", "agent": "all", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:36.321980", "agent": "all", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:36.666141", "agent": "all", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:37.027293", "agent": "all", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T01:54:37.409369", "agent": "all", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:37.840350", "agent": "all", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:38.307633", "agent": "all", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:38.876849", "agent": "all", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:39.487465", "agent": "all", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T01:54:39.836298", "agent": "all", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:40.257432", "agent": "all", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:40.625358", "agent": "all", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:40.967431", "agent": "all", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:41.338448", "agent": "all", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T01:54:41.728065", "agent": "all", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T01:54:59.891744", "agent": "AI_Edge", "event": "rag_query", "query": "YOLO detection", "results_count": 2}
+{"timestamp": "2026-08-18T01:55:00.143040", "agent": "all", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:00.385156", "agent": "all", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:00.622211", "agent": "all", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:00.871549", "agent": "all", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T01:55:01.116063", "agent": "all", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:01.344792", "agent": "all", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:01.577665", "agent": "all", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:01.818269", "agent": "all", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:02.072572", "agent": "all", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T01:55:02.340101", "agent": "all", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:02.591339", "agent": "all", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:02.851559", "agent": "all", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:03.091537", "agent": "all", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:03.325077", "agent": "all", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T01:55:03.559903", "agent": "all", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:03.798515", "agent": "all", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:04.040211", "agent": "all", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:04.308286", "agent": "all", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:04.561832", "agent": "all", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T01:55:04.801176", "agent": "all", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:43.931699", "agent": "AI_Edge", "event": "rag_query", "query": "YOLO detection", "results_count": 2}
+{"timestamp": "2026-08-18T01:55:44.300299", "agent": "Master", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:44.659487", "agent": "Master", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:45.030549", "agent": "Master", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:45.455991", "agent": "Master", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T01:55:45.810525", "agent": "Master", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:46.149276", "agent": "Master", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:46.490698", "agent": "Master", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:46.827560", "agent": "Master", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:47.176181", "agent": "Master", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T01:55:47.522517", "agent": "Master", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:47.920654", "agent": "Master", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:48.281424", "agent": "Master", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:48.613192", "agent": "Master", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:49.009970", "agent": "Master", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T01:55:49.367226", "agent": "Master", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:49.717960", "agent": "Master", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:50.071546", "agent": "Master", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:50.417670", "agent": "Master", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T01:55:50.789778", "agent": "Master", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T01:55:51.119008", "agent": "Master", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T01:56:11.137091", "agent": "Master", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T03:57:30.952627", "agent": "Master", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T03:57:57.649159", "agent": "AI_Edge", "event": "rag_query", "query": "YOLO detection", "results_count": 2}
+{"timestamp": "2026-08-18T03:57:58.124403", "agent": "Master", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T03:57:58.630286", "agent": "Master", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T03:57:59.056353", "agent": "Master", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T03:57:59.527286", "agent": "Master", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T03:57:59.964478", "agent": "Master", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T03:59:03.086391", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 88, "total_gaps": 11}
+{"timestamp": "2026-08-18T03:59:03.336822", "agent": "IdeaScout", "event": "research_executed", "agents_scouted": ["UI", "API", "AI_Edge", "DB", "Security", "Logs"], "rfcs_generated": 16}
+{"timestamp": "2026-08-18T03:59:06.902212", "agent": "AI_Edge", "event": "rag_query", "query": "YOLO detection", "results_count": 2}
+{"timestamp": "2026-08-18T03:59:07.167224", "agent": "Master", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T03:59:07.436438", "agent": "Master", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T03:59:07.712302", "agent": "Master", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T03:59:07.985268", "agent": "Master", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T03:59:08.264184", "agent": "Master", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-18T03:59:16.256258", "agent": "Master", "event": "memory_written", "type": "learning", "text": "Ciclo de Auto-Evolução EVOLVE-20260818-035902 executado com sucesso: Tech Radar sincronizado, RFCs geradas e Benchmarks SLA 100% aprovados."}
+{"timestamp": "2026-08-18T04:08:24.830982", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 88, "total_gaps": 11}
+{"timestamp": "2026-08-18T04:17:26.815077", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 85, "total_gaps": 16}
+{"timestamp": "2026-08-18T04:17:50.129787", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 89, "total_gaps": 12}
+{"timestamp": "2026-08-18T04:18:01.267974", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 90, "total_gaps": 11}
+{"timestamp": "2026-08-18T04:50:59.172621", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 90, "total_gaps": 11}
+{"timestamp": "2026-08-18T07:32:33.645188", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 90, "total_gaps": 11}
+{"timestamp": "2026-08-18T08:03:41.043299", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 90, "total_gaps": 11}
+{"timestamp": "2026-08-18T08:05:37.332536", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 90, "total_gaps": 11}
+{"timestamp": "2026-08-18T08:05:50.907223", "agent": "AI_Edge", "event": "rag_query", "query": "YOLO detection", "results_count": 2}
+{"timestamp": "2026-08-18T08:05:51.438595", "agent": "Master", "event": "rag_query", "query": "YOLO pipeline", "results_count": 3}
+{"timestamp": "2026-08-18T08:05:51.889775", "agent": "Master", "event": "rag_query", "query": "Socket.IO events", "results_count": 3}
+{"timestamp": "2026-08-18T08:05:52.387603", "agent": "Master", "event": "rag_query", "query": "Drizzle schema", "results_count": 3}
+{"timestamp": "2026-08-18T08:05:52.875500", "agent": "Master", "event": "rag_query", "query": "RLS security", "results_count": 2}
+{"timestamp": "2026-08-18T08:05:53.296163", "agent": "Master", "event": "rag_query", "query": "React UI", "results_count": 3}
+{"timestamp": "2026-08-21T01:43:25.797052", "agent": "UI", "event": "rag_query", "query": "", "results_count": 3}
+{"timestamp": "2026-08-21T01:43:25.798409", "agent": "UI", "event": "session_opened"}
+{"timestamp": "2026-08-21T02:24:12.063080", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 89, "total_gaps": 12}
+{"timestamp": "2026-08-21T02:24:31.875105", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 90, "total_gaps": 11}
+{"timestamp": "2026-08-21T02:25:48.771274", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 90, "total_gaps": 11}
+{"timestamp": "2026-08-21T02:42:32.786532", "agent": "UI", "event": "memory_written", "type": "learning", "text": "Reconstrução Component-Driven da tela de Login concluída: AuthCard, LoginForm, AuthStatusBanner no Storybook com 5 estados canônicos e restrição de accent laranja exclusivo ao logo."}
+{"timestamp": "2026-08-21T15:06:14.319339", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 90, "total_gaps": 11}
+{"timestamp": "2026-08-21T15:10:38.290372", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 100, "total_gaps": 0}
+{"timestamp": "2026-08-21T15:42:39.393430", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 94, "total_gaps": 7}
+{"timestamp": "2026-08-21T15:43:32.349628", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 99, "total_gaps": 1}
+{"timestamp": "2026-08-21T15:43:50.847900", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 100, "total_gaps": 0}
+{"agent":"API","event":"rag_query_go","query":"auth","results_count":0,"timestamp":"2026-08-21T16:12:40-03:00"}
+{"timestamp": "2026-08-21T17:46:00.966110", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 98, "total_gaps": 2}
+{"timestamp": "2026-08-21T17:46:47.168045", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 99, "total_gaps": 1}
+{"timestamp": "2026-08-21T17:47:03.918144", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 99, "total_gaps": 1}
+{"timestamp": "2026-08-21T17:47:38.337884", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 100, "total_gaps": 0}
+{"timestamp": "2026-08-21T18:44:18.875933", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 100, "total_gaps": 0}
+{"timestamp": "2026-08-24T10:50:43.658728", "agent": "SelfImprovement", "event": "audit_completed", "avg_score": 100, "total_gaps": 0}
+{"timestamp": "2026-08-24T18:09:23.422683", "agent": "API", "event": "rag_query", "query": "como funciona o RiskBuilder e a fusão de evidências bayesiana", "results_count": 2}
+{"timestamp": "2026-08-24T18:17:44.086742", "agent": "API", "event": "rag_query", "query": "como funciona o RiskBuilder e a fusão de evidências bayesiana", "results_count": 4}
+{"timestamp": "2026-08-24T18:20:33.723712", "agent": "API", "event": "rag_query", "query": "RiskBuilder fusão de evidências", "results_count": 2}
+{"timestamp": "2026-08-24T18:20:50.852022", "agent": "API", "event": "rag_query", "query": "RiskBuilder fusão de evidências bayesiana", "results_count": 3}
+{"agent":"API","event":"rag_query_go","query":"RiskBuilder fusão de evidências bayesiana","results_count":3,"timestamp":"2026-08-24T18:20:51-03:00"}
+{"timestamp": "2026-08-24T18:37:43.528014", "agent": "API", "event": "rag_query", "query": "RiskBuilder fusão de evidências", "results_count": 2}
+{"timestamp": "2026-08-27T11:32:20.932097", "agent": "Orchestrator", "event": "rag_query", "query": "SPEC-DOM-RETAIL-001 OportunidadeLojistaDTO registro_valor_cliente", "results_count": 2}
+{"agent":"Orchestrator","event":"rag_query_go","query":"SPEC-DOM-RETAIL-001 OportunidadeLojistaDTO registro_valor_cliente","results_count":2,"timestamp":"2026-08-27T11:32:21-03:00"}

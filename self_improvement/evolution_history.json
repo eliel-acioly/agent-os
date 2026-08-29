@@ -1,0 +1,58 @@
+[
+  {
+    "cycle_id": "EVOLVE-20260818-015429",
+    "timestamp": "2026-08-18T01:54:48.597895",
+    "dry_run": false,
+    "all_success": false,
+    "steps": [
+      {
+        "step": "1. Auditoria de Qualidade dos Agentes",
+        "success": true
+      },
+      {
+        "step": "2. Mapeamento do Tech Radar",
+        "success": true
+      },
+      {
+        "step": "3. Pesquisa SOTA e Geração de RFCs",
+        "success": true
+      },
+      {
+        "step": "4. Sincronização do Grafo de Código",
+        "success": true
+      },
+      {
+        "step": "5. Bateria de Benchmarks de Missão Crítica",
+        "success": false
+      }
+    ]
+  },
+  {
+    "cycle_id": "EVOLVE-20260818-035902",
+    "timestamp": "2026-08-18T03:59:16.256258",
+    "dry_run": false,
+    "all_success": true,
+    "steps": [
+      {
+        "step": "1. Auditoria de Qualidade dos Agentes",
+        "success": true
+      },
+      {
+        "step": "2. Mapeamento do Tech Radar",
+        "success": true
+      },
+      {
+        "step": "3. Pesquisa SOTA e Geração de RFCs",
+        "success": true
+      },
+      {
+        "step": "4. Sincronização do Grafo de Código",
+        "success": true
+      },
+      {
+        "step": "5. Bateria de Benchmarks de Missão Crítica",
+        "success": true
+      }
+    ]
+  }
+]

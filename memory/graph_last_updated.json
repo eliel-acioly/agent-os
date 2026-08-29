@@ -1,0 +1,20 @@
+{
+  "antecipia-api": {
+    "last_head": "33afd73",
+    "last_updated": "2026-08-18T01:39:12.237852",
+    "rebuilt": false,
+    "changes_detected": 0
+  },
+  "antecipia-ui": {
+    "last_head": "1c95727",
+    "last_updated": "2026-08-18T01:39:21.544647",
+    "rebuilt": false,
+    "changes_detected": 0
+  },
+  "root": {
+    "last_head": "6ffe528",
+    "last_updated": "2026-08-18T01:39:34.704137",
+    "rebuilt": false,
+    "changes_detected": 24
+  }
+}

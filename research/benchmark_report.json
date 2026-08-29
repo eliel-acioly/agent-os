@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-08-18T08:05:59.713772",
+  "overall_passed": true,
+  "results": {
+    "Evidential Deep Learning (EDL) Latency": {
+      "name": "Evidential Deep Learning (EDL) Latency",
+      "avg_ms": 0.04,
+      "p99_ms": 0.068,
+      "iterations": 100,
+      "passed": true,
+      "target_max_ms": 5.0
+    },
+    "RAG ChromaDB Vector Search Latency": {
+      "name": "RAG ChromaDB Vector Search Latency",
+      "avg_ms": 480.11,
+      "p95_ms": 532.72,
+      "queries_executed": 5,
+      "passed": true,
+      "target_max_ms": 2000.0
+    },
+    "Agent Skills Quality & Completeness": {
+      "name": "Agent Skills Quality & Completeness",
+      "avg_score": 100.0,
+      "min_score": 100,
+      "total_skills": 14,
+      "passed": true,
+      "target_min_score": 95.0
+    },
+    "TypeScript Type Integrity Check (antecipia-ui)": {
+      "name": "TypeScript Type Integrity Check (antecipia-ui)",
+      "errors": 0,
+      "passed": true,
+      "output": "0 errors"
+    }
+  }
+}

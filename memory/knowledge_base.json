@@ -1,0 +1,126 @@
+{
+  "version": "2.0",
+  "description": "Base de conhecimento persistente dos agentes AntecipIA. Acumulada automaticamente via memory_write.py após cada sessão de desenvolvimento.",
+  "last_updated": "2026-08-21",
+  "agents": {
+    "Product": {
+      "learnings": [
+        "Toda feature DEVE ter a Matriz 4V (POST/GET/PATCH/Event) antes de entrar na esteira técnica.",
+        "Nunca propor features que não fortaleçam os 5 pilares do DNA AntecipIA.",
+        "O BACKLOG.md em /docs é a única fonte de priorização; atualizá-lo é obrigatório antes do handoff."
+      ],
+      "patterns": [],
+      "blockers_history": []
+    },
+    "Security": {
+      "learnings": [
+        "Toda rota nova no backend deve ter seu middleware de autenticação validado antes de passar para o @Logs.",
+        "Nunca expor SUPABASE_SERVICE_ROLE_KEY no código client-side — verificar em todo PR.",
+        "RLS deve ser criada junto com a tabela, nunca como etapa posterior."
+      ],
+      "patterns": [],
+      "blockers_history": []
+    },
+    "DB": {
+      "learnings": [
+        "Sempre usar drizzle-kit generate antes de push — nunca alterar o banco diretamente.",
+        "Campos de auditoria (criado_em, atualizado_em) são obrigatórios em toda tabela nova.",
+        "Nomes de colunas e tabelas em snake_case PT-BR — ex: criado_em, status_alerta, tenant_id."
+      ],
+      "patterns": [
+        "Padrão de tenant isolation: WHERE tenant_id = auth.uid() em todas as políticas RLS."
+      ],
+      "blockers_history": []
+    },
+    "Gateway": {
+      "learnings": [
+        "Sempre regenerar stubs Go após alterar .proto — go build só valida se os stubs estiverem atualizados.",
+        "MediaMTX precisa de restart explícito após mudança de configuração de stream.",
+        "Gateway não deve ter acesso direto ao banco de dados relacional.",
+        "Links para arquivos reais do diretório services/antecipia-gateway/ devem ser incluídos no SKILL.md"
+      ],
+      "patterns": [],
+      "blockers_history": []
+    },
+    "API": {
+      "learnings": [
+        "Todos os DTOs devem nascer em shared/contracts/ antes de serem usados em server.ts.",
+        "Sempre usar try/catch em handlers de Socket.IO — erros não tratados derrubam o processo.",
+        "Idempotência: eventos Socket.IO podem ser disparados mais de uma vez em reconnects."
+      ],
+      "patterns": [
+        "Pattern de validação de rota: req -> Zod.parse() -> service() -> res.json()"
+      ],
+      "blockers_history": []
+    },
+    "AI_Edge": {
+      "learnings": [
+        "NUNCA converter frames em PIL Image em loops de processamento — usa NumPy/Tensors diretos.",
+        "vllm_factory.py DEVE preservar a capacidade de alternância dinâmica Borda/Nuvem.",
+        "Containers CPU-only: instalar PyTorch com --index-url https://download.pytorch.org/whl/cpu.",
+        "Evidential Deep Learning (EDL) pós-processa detecções YOLO quantificando incerteza epistêmica e aleatória via distribuição Dirichlet, gerando risk_flag estruturado para o RiskBuilder",
+        "RAG Semântico via ChromaDB e code-review-graph devem ser consultados via session_open.py ou query_engine.py antes de alterar algoritmos de inferência"
+      ],
+      "patterns": [],
+      "blockers_history": []
+    },
+    "UI": {
+      "learnings": [
+        "Toda tela deve ter os 5 estados: Loading, Empty, Error, Offline, Success/Confirmation.",
+        "Canvas/PixiJS e WebSocket (useWorldModel.ts) NUNCA devem travar a main thread.",
+        "Nunca usar Regex para editar JSX/TSX — sempre edição estruturada.",
+        "Reconstrução Component-Driven da tela de Login concluída: AuthCard, LoginForm, AuthStatusBanner no Storybook com 5 estados canônicos e restrição de accent laranja exclusivo ao logo.",
+        "Lei dos 3 Pesos Visuais (Obrigatória): Peso 1 (Crítico, acima da dobra, sem esforço mental em <2s), Peso 2 (Importante, contexto e ação primária), Peso 3 (Contextual/Histórico, OBRIGATORIAMENTE escondido por padrão sob demanda)."
+      ],
+      "patterns": [
+        "Ciclo de decisão: Evidência → Contexto → Compreensão → Confiança → Decisão → Ação → Confirmação"
+      ],
+      "blockers_history": []
+    },
+    "Logs": {
+      "learnings": [
+        "Sempre executar npx --yes kill-port 3000 antes de qualquer suite E2E.",
+        "Testes residem EXCLUSIVAMENTE em /docs/testes/<SubpastaDatada>/.",
+        "Declarar sempre: Ambiente, Persistência, Volume e Estratégia de Cleanup."
+      ],
+      "patterns": [],
+      "blockers_history": []
+    },
+    "Master": {
+      "learnings": [
+        "Nunca mergear sem @Logs ter passado 100% da suite de testes.",
+        "Sempre registrar épicos concluídos em docs/04_HISTORICO_DO_PROJETO.md antes do merge.",
+        "Executar validate_handoff_pipeline.py como primeira ação ao receber um handoff.",
+        "Ciclo de Auto-Evolução EVOLVE-20260818-035902 executado com sucesso: Tech Radar sincronizado, RFCs geradas e Benchmarks SLA 100% aprovados."
+      ],
+      "patterns": [],
+      "blockers_history": []
+    }
+  },
+  "architecture_decisions": [
+    {
+      "date": "2026-08-18",
+      "decision": "shared/contracts/ é a SSOT de todos os DTOs e interfaces. Nenhum agente inventa estruturas locais.",
+      "rationale": "Eliminar dessincronização entre Frontend e Backend.",
+      "approved_by": "CTO"
+    },
+    {
+      "date": "2026-08-18",
+      "decision": "Worker de IA usa arquitetura híbrida Borda/Nuvem via vllm_factory.py. Nunca acoplar exclusivamente a uma modalidade.",
+      "rationale": "Flexibilidade operacional e controle de custo de inferência.",
+      "approved_by": "CTO"
+    },
+    {
+      "date": "2026-08-18",
+      "decision": "Motor de raciocínio dos agentes é o LLM da IDE. Scripts Python são a musculatura de automação.",
+      "rationale": "Evitar dependência de frameworks externos (LangChain/CrewAI) que adicionam fragilidade.",
+      "approved_by": "CTO"
+    },
+    {
+      "date": "2026-08-18",
+      "decision": "A esteira canônica opera obrigatoriamente no pipeline de 7 fases: @Orchestrator -> (F1: @Product -> @Security) -> (F2: @DB -> @Gateway) -> (F3: @Contracts -> @API -> @AI_Edge) -> (F4: @UI) -> (F5: @Logs) -> (F6: @Master) -> (F7: @Deploy).",
+      "rationale": "Garantir padrão aeroespacial (NASA/SpaceX standard) com zero quebra de contratos e zero defeitos em produção.",
+      "approved_by": "CTO"
+    }
+  ]
+}
