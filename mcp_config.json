@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mercadopago-official": {
+      "serverUrl": "https://mcp.mercadopago.com/mcp"
+    },
+    "mercadopago-ligacommerce": {
+      "command": "node",
+      "args": ["scripts/mcp-mercadopago-server.js"]
+    }
+  }
+}
