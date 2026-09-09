@@ -275,8 +275,39 @@ def main():
     print(f"  Evaluators: {', '.join(eval_names)} | max_trials={max_trials}")
     print(SEP)
 
+    # Agent-OS 2.0: Task Graph + Context Engine (com fallback para caminho simples)
+    tg_id = task_id
+    try:
+        from task_graph import new_task, advance as tg_advance
+        new_task(mission, agent)
+        tg_advance(task_id, "UNDERSTAND", "in_progress")
+    except Exception:
+        tg_advance = None
+    ctx = {}
+    try:
+        from context_engine import assemble
+        ctx = assemble(mission, agent)
+        emit({"timestamp": datetime.now().isoformat(), "type": "context",
+              "intent": ctx.get("intent"), "entities": ctx.get("entities", [])[:6],
+              "risks": ctx.get("risks", []), "confidence": ctx.get("confidence", {}),
+              "verification_plan": ctx.get("verification_plan", [])})
+        print(f"  Context: intent={ctx.get('intent')} entities={len(ctx.get('entities', []))} "
+              f"deps={len(ctx.get('dependencies', []))} risks={len(ctx.get('risks', []))}")
+        print(f"  Verify plan: {' → '.join(ctx.get('verification_plan', [])[:4])}")
+        if tg_advance:
+            tg_advance(task_id, "UNDERSTAND", "done", f"intent={ctx.get('intent')}")
+            tg_advance(task_id, "RETRIEVE", "in_progress")
+    except Exception as e:
+        print(f"  [aviso] context engine indisponível ({type(e).__name__}); usando RAG direto.")
+
     rag_hits = get_rag_context(mission, agent)
-    blast = get_blast_context(mission)
+    blast = [d.get("file", "") for d in (ctx.get("dependencies", []) or [])] or get_blast_context(mission)
+    try:
+        if tg_advance and ctx:
+            tg_advance(task_id, "RETRIEVE", "done", f"{len(rag_hits)} hits")
+            tg_advance(task_id, "IMPLEMENT", "in_progress")
+    except Exception:
+        pass
     log_cost(agent, "standard", f"think:{mission[:60]}")
 
     verdict = {"task_id": task_id, "mission": mission, "agent": agent, "passed": False, "trials": []}
@@ -306,9 +337,17 @@ def main():
                                   "evaluators": [o["name"] for o in observations]})
         if all_pass:
             verdict["passed"] = True
+            verdict["confidence"] = (ctx.get("confidence", {}) if ctx else {})
             print(f"\n  VEREDITO: PASS no trial {trial}. Sem necessidade de reflexão.")
             # Recompensa reflexões usadas (selective reinforcement)
             emit({"timestamp": datetime.now().isoformat(), "type": "verdict", "passed": True, "trial": trial})
+            try:
+                if tg_advance:
+                    tg_advance(task_id, "IMPLEMENT", "done", f"PASS trial {trial}")
+                    tg_advance(task_id, "VERIFY", "done", "evaluators PASS")
+                    tg_advance(task_id, "DELIVER", "done", "pronto para review")
+            except Exception:
+                pass
             break
 
         # Reflect (economy tier) — só reflete sobre evidência real
@@ -323,6 +362,11 @@ def main():
         if trial == max_trials:
             print(f"\n  VEREDITO: FAIL após {max_trials} trials. Escalar para humano com trace em {trace_path.name}.")
             emit({"timestamp": datetime.now().isoformat(), "type": "verdict", "passed": False, "trial": trial})
+            try:
+                if tg_advance:
+                    tg_advance(task_id, "VERIFY", "failed", f"FAIL após {max_trials} trials")
+            except Exception:
+                pass
 
     if args.json:
         print(json.dumps(verdict, indent=2, ensure_ascii=False))
