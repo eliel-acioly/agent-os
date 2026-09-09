@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-orchestrate_task.py — AntecipIA Agent Platform v2.0
-Decompõe uma missão em tarefas atômicas e gera o HANDOFF.md preenchido.
+orchestrate_task.py — Agent-OS (agnóstico a projeto)
+Decompõe uma missão em tarefas atômicas e gera o HANDOFF.md preenchido no PROJETO LINKADO.
 Uso: python .agents/scripts/orchestrate_task.py --mission "Implementar módulo de alertas de pânico"
      python .agents/scripts/orchestrate_task.py --type full-stack --mission "Nova feature X"
      python .agents/scripts/orchestrate_task.py --status   (exibe status atual do HANDOFF.md)
@@ -16,47 +16,57 @@ from datetime import datetime
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
+sys.path.insert(0, str(Path(__file__).parent))
+try:
+    from project_context import get_project_root, get_project_slug
+    PROJECT_ROOT = get_project_root()
+    PROJECT_SLUG = get_project_slug(PROJECT_ROOT)
+except Exception:
+    PROJECT_ROOT = Path.cwd()
+    PROJECT_SLUG = "proj"
+
 SEPARATOR = "═" * 65
-HANDOFF_FILE = Path("HANDOFF.md")
+HANDOFF_FILE = PROJECT_ROOT / "HANDOFF.md"
 
 # Definição de esteiras por tipo de épico
 PIPELINE_TEMPLATES = {
     "full-stack": {
         "description": "DB + API + UI + Realtime",
-        "agents": ["Product", "Security", "DB", "Contracts", "API", "UI", "Logs", "Master"]
+        "agents": ["Product", "Security", "DB", "Contracts", "API", "UI", "Review", "Logs", "Master"]
     },
     "backend-only": {
         "description": "Apenas endpoints e serviços backend, sem nova tela",
-        "agents": ["Product", "API", "Logs", "Master"]
+        "agents": ["Product", "API", "Review", "Logs", "Master"]
     },
     "frontend-only": {
         "description": "Apenas interface, endpoints existentes",
-        "agents": ["Product", "UI", "Logs", "Master"]
+        "agents": ["Product", "UI", "Review", "Logs", "Master"]
     },
     "infra-vision": {
         "description": "Worker Python, gRPC, MediaMTX, modelos de IA",
-        "agents": ["Product", "Gateway", "AI_Edge", "API", "Logs", "Master"]
+        "agents": ["Product", "Gateway", "AI_Edge", "API", "Review", "Logs", "Master"]
     },
     "db-migration": {
         "description": "Schema, migrations e RLS",
-        "agents": ["Product", "DB", "API", "Logs", "Master"]
+        "agents": ["Product", "DB", "API", "Review", "Logs", "Master"]
     },
     "deploy": {
         "description": "Entrega em nuvem de feature já validada",
-        "agents": ["Logs", "Master", "Deploy"]
+        "agents": ["Review", "Logs", "Master", "Deploy"]
     }
 }
 
 AGENT_TASK_HINTS = {
     "Product":      ["Definir Matriz 4V (POST/GET/PATCH/Event)", "Atualizar BACKLOG.md", "Criar briefing funcional para equipe técnica"],
     "Security":     ["Auditar rotas de acesso e RLS", "Verificar isolamento multi-tenant", "Validar sanitização de inputs"],
-    "DB":           ["Criar/atualizar schema.ts com Drizzle ORM", "Gerar migration via drizzle-kit generate", "Criar políticas RLS para novas tabelas"],
+    "DB":           ["Criar/atualizar schema com Drizzle ORM", "Gerar migration via drizzle-kit generate", "Criar políticas RLS para novas tabelas"],
     "Contracts":    ["Criar/atualizar interfaces em shared/contracts/", "Verificar sincronização de tipos Frontend↔Backend"],
-    "Gateway":      ["Atualizar arquivo .proto se necessário", "Regenerar stubs Go", "Validar compilação com go build"],
-    "API":          ["Criar rotas/controllers em server.ts", "Implementar validação Zod nos payloads", "Adicionar eventos Socket.IO se necessário"],
-    "AI_Edge":      ["Atualizar pipeline de inferência em main.py", "Validar arquitetura híbrida vllm_factory.py", "Verificar ausência de PIL Image em loops críticos"],
-    "UI":           ["Criar/atualizar componentes em antecipia-ui/src/", "Implementar estados: Loading/Empty/Error/Offline/Success", "Validar compilação tsc --noEmit"],
+    "Gateway":      ["Atualizar arquivo .proto se necessário", "Regenerar stubs", "Validar compilação do gateway"],
+    "API":          ["Criar rotas/controllers no backend (app/api/ ou server)", "Implementar validação Zod nos payloads", "Adicionar eventos realtime se necessário"],
+    "AI_Edge":      ["Atualizar pipeline de inferência", "Validar arquitetura do worker", "Verificar loops críticos sem alocação pesada"],
+    "UI":           ["Criar/atualizar componentes em components/ e app/", "Implementar estados: Loading/Empty/Error/Offline/Success", "Validar compilação tsc --noEmit"],
     "Logs":         ["Criar suíte de testes em /docs/testes/<data>/", "Executar npx --yes kill-port 3000", "Garantir 100% de assertions aprovadas"],
+    "Review":       ["Revisão Adversarial (Red-Queen Review): procurar lacunas de corretude e requisito nas entregas do épico", "Reportar APENAS gaps que afetam correção ou requisito declarado (não perseguir estilo/estética)", "Verificar que o comando de prova foi executado (tsc/testes/build) — verification-first", "BLOQUEAR a esteira (devolver ao desenvolvedor) se houver gap de corretude; APROVAR caso contrário"],
     "Master":       ["Executar validate_handoff_pipeline.py", "Executar pnpm tsc --noEmit", "Registrar épico em docs/04_HISTORICO_DO_PROJETO.md"],
     "Deploy":       ["Aplicar migrations no Supabase remoto", "Build e push de imagens Docker", "Deploy API no Railway e frontend em produção"]
 }
@@ -89,7 +99,7 @@ def generate_handoff(mission: str, epic_type: str, branch_name: str) -> str:
     agents = template["agents"]
 
     lines = [
-        f"# AntecipIA - Sistema Tático de Hand-off",
+        f"# {PROJECT_SLUG} - Sistema de Hand-off",
         f"",
         f"> **Regra Suprema de Modificação:** APENAS O AGENTE EM TURNO PODE MODIFICAR SEU RESPECTIVO PASSO.",
         f"",

@@ -35,7 +35,7 @@ Objetivo de Negócio (INPUT)
 - Nunca acione um agente especialista imediatamente.
 - Primeiro, utilize o motor **GraphRAG** (Semântica + Grafo) para mapear o impacto da feature e as dependências cruzadas.
 - **Obrigatoriedade:** Você deve compilar essas descobertas em um arquivo chamado `CONTEXT.md`. Este arquivo deve conter a lista de arquivos afetados, dependências diretas e um sumário técnico. Os agentes operários lerão este arquivo para agir sem precisarem pesquisar do zero.
-- Em seguida, defina a arquitetura, classifique a complexidade do épico e redija o [HANDOFF.md](file:///c:/dev/startup-AntecipIA/03_engineering/HANDOFF.md).
+- Em seguida, defina a arquitetura, classifique a complexidade do épico e redija o [HANDOFF.md](HANDOFF.md).
 - No `HANDOFF.md`, utilize a numeração estrita requerida pela auditoria: `## 1. Passo 1 (@NomeDoAgente)`.
 
 ### 2. Guardião das 5 Leis do SOTA & Anti-Destruição

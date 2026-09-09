@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
-indexer.py — AntecipIA Agent Platform v2.0 — RAG Layer
-Indexa o codebase do projeto em um vector store ChromaDB persistente.
-Uso: python .agents/rag/indexer.py [--target all|antecipia-api|antecipia-ui|services]
+indexer.py — Agent-OS RAG Layer (agnóstico a projeto)
+Indexa o codebase do PROJETO LINKADO (raiz com `.agents/`) em vector store ChromaDB.
+Uso: python .agents/rag/indexer.py [--target all|app|components|lib|docs|scripts|agents]
 """
 
 import sys
 import os
+import time
+import gc
 import hashlib
 from pathlib import Path
 from datetime import datetime
@@ -16,10 +18,20 @@ if hasattr(sys.stdout, 'reconfigure'):
 
 import argparse
 
-ROOT = Path(__file__).parent.parent.parent
-AGENTS_DIR = Path(__file__).parent.parent
+# Contexto agnóstico: PROJECT_ROOT = projeto linkado, AGENTS_DIR = agent-os real
+sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
+from project_context import (
+    get_project_root, get_agents_dir, get_project_slug,
+    get_index_dir, legacy_index_dir, collection_name, legacy_collection_name,
+    discover_code_dirs,
+)
+
+PROJECT_ROOT = get_project_root()
+AGENTS_DIR = get_agents_dir()
+PROJECT_SLUG = get_project_slug(PROJECT_ROOT)
 RAG_DIR = AGENTS_DIR / "rag"
-INDEX_DIR = RAG_DIR / "knowledge" / "project_index"
+INDEX_DIR = get_index_dir(PROJECT_ROOT, AGENTS_DIR)
+LEGACY_INDEX_DIR = legacy_index_dir(AGENTS_DIR)
 
 SEPARATOR = "═" * 65
 
@@ -40,22 +52,16 @@ EXCLUDE_PATTERNS = [
     "build", ".next", "generated", "migrations", "vllm_providers/__pycache__"
 ]
 
-# Diretórios de código por alvo
-TARGET_DIRS = {
-    "antecipia-api": [ROOT / "antecipia-api" / "src", ROOT / "antecipia-api" / "server"],
-    "antecipia-ui":  [ROOT / "antecipia-ui" / "src"],
-    "services":      [ROOT / "services"],
-    "agents":        [AGENTS_DIR / "skills"],
-    "shared":        [ROOT / "shared"],
-    "all": [
-        ROOT / "antecipia-api" / "src",
-        ROOT / "antecipia-api" / "server",
-        ROOT / "antecipia-ui" / "src",
-        ROOT / "services",
-        ROOT / "shared",
-        AGENTS_DIR / "skills",
-    ]
-}
+# Diretórios de código por alvo (descoberta dinâmica, agnóstica ao projeto)
+def _build_target_dirs() -> dict:
+    found = discover_code_dirs(PROJECT_ROOT)
+    # Garante chaves estáveis mesmo se o dir não existir no projeto atual
+    for key in ("app", "components", "lib", "docs", "scripts", "agents", "all"):
+        found.setdefault(key, [])
+    return found
+
+
+TARGET_DIRS = _build_target_dirs()
 
 
 def should_exclude(path: Path) -> bool:
@@ -125,7 +131,7 @@ def get_chroma_client():
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Indexa o codebase AntecipIA no RAG ChromaDB.")
+    parser = argparse.ArgumentParser(description="Indexa o codebase do projeto linkado no RAG ChromaDB.")
     parser.add_argument("--target", "-t",
                         choices=list(TARGET_DIRS.keys()),
                         default="all", help="Alvo de indexação")
@@ -134,24 +140,25 @@ def main():
     args = parser.parse_args()
 
     print(f"\n{SEPARATOR}")
-    print(f"  🗂️  AntecipIA RAG Indexer — ChromaDB")
+    print(f"  RAG Indexer — ChromaDB (projeto: {PROJECT_SLUG})")
     print(f"  Target: {args.target.upper()}")
+    print(f"  Root: {PROJECT_ROOT}")
     print(f"  Index: {INDEX_DIR}")
     print(SEPARATOR)
 
     client = get_chroma_client()
-    collection_name = f"antecipia_{args.target}"
+    coll_name = collection_name(args.target, PROJECT_ROOT)
 
     if args.reset:
         try:
-            client.delete_collection(collection_name)
-            print(f"[INFO] Coleção '{collection_name}' removida para re-indexação.")
+            client.delete_collection(coll_name)
+            print(f"[INFO] Coleção '{coll_name}' removida para re-indexação.")
         except Exception:
             pass
 
     collection = client.get_or_create_collection(
-        name=collection_name,
-        metadata={"description": f"AntecipIA codebase — {args.target}", "hnsw:space": "cosine"}
+        name=coll_name,
+        metadata={"description": f"{PROJECT_SLUG} codebase — {args.target}", "hnsw:space": "cosine"}
     )
 
     # Coletar arquivos de forma segura (sem entrar em node_modules/venv/etc.)
@@ -175,10 +182,23 @@ def main():
 
     print(f"\n  📁 Arquivos encontrados: {len(all_files)}")
 
-    # Indexar em batches
-    BATCH_SIZE = 50
+    # Indexar em batches consolidados
+    BATCH_SIZE = 100
     total_chunks = 0
     indexed_files = 0
+
+    batch_ids = []
+    batch_docs = []
+    batch_metas = []
+
+    def flush_batch():
+        nonlocal batch_ids, batch_docs, batch_metas, total_chunks
+        if batch_ids:
+            collection.upsert(ids=batch_ids, documents=batch_docs, metadatas=batch_metas)
+            total_chunks += len(batch_ids)
+            batch_ids = []
+            batch_docs = []
+            batch_metas = []
 
     for i, file_path in enumerate(all_files):
         try:
@@ -186,44 +206,61 @@ def main():
             if len(content.strip()) < 20:
                 continue
 
-            rel_path = str(file_path.relative_to(ROOT))
+            try:
+                rel_path = str(file_path.relative_to(PROJECT_ROOT)).replace("\\", "/")
+            except ValueError:
+                # Arquivo do agent-os (skills/scripts): relativiza pelo AGENTS_DIR
+                try:
+                    rel_path = ".agents/" + str(file_path.relative_to(AGENTS_DIR)).replace("\\", "/")
+                except ValueError:
+                    rel_path = file_path.name
             chunks = chunk_code(content, rel_path)
 
             if not chunks:
                 continue
 
-            # Preparar batch para ChromaDB
-            ids = []
-            documents = []
-            metadatas = []
-
             for j, chunk in enumerate(chunks):
                 chunk_id = hashlib.md5(f"{rel_path}:{j}:{chunk['text'][:50]}".encode()).hexdigest()
-                ids.append(chunk_id)
-                documents.append(chunk["text"])
-                metadatas.append({
-                    "source": chunk["source"],
+                batch_ids.append(chunk_id)
+                batch_docs.append(chunk["text"])
+                batch_metas.append({
+                    "source": chunk["source"].replace("\\", "/"),
                     "start_line": chunk["start_line"],
                     "end_line": chunk["end_line"],
                     "file_type": INDEXED_EXTENSIONS.get(file_path.suffix, "Unknown"),
                     "indexed_at": datetime.now().isoformat()
                 })
 
-            # Upsert para evitar duplicatas
-            collection.upsert(ids=ids, documents=documents, metadatas=metadatas)
-            total_chunks += len(chunks)
+                if len(batch_ids) >= BATCH_SIZE:
+                    flush_batch()
+
             indexed_files += 1
 
             if (i + 1) % 10 == 0:
-                print(f"  [{i+1}/{len(all_files)}] {indexed_files} arquivos, {total_chunks} chunks indexados...")
+                print(f"  [{i+1}/{len(all_files)}] {indexed_files} arquivos processados, {total_chunks + len(batch_ids)} chunks acumulados...")
 
         except Exception as e:
             print(f"  [ERRO] {file_path.name}: {e}")
 
+    # Esvaziar batch restante
+    flush_batch()
+
+    # Garantir sincronização e contagem do HNSW
+    time.sleep(1)
+    final_count = 0
+    try:
+        final_count = collection.count()
+    except Exception as e:
+        print(f"  [AVISO] Verificação de contagem: {e}")
+
+    del collection
+    del client
+    gc.collect()
+
     print(f"\n{SEPARATOR}")
-    print(f"  ✅ Indexação completa!")
-    print(f"  📊 {indexed_files} arquivos / {total_chunks} chunks indexados")
-    print(f"  💾 Coleção: '{collection_name}' ({INDEX_DIR})")
+    print(f"  Indexação completa!")
+    print(f"  {indexed_files} arquivos / {total_chunks} chunks indexados (Total na base: {final_count})")
+    print(f"  Coleção: '{coll_name}' ({INDEX_DIR})")
     print(SEPARATOR + "\n")
 
 

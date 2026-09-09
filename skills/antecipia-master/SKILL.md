@@ -34,8 +34,8 @@ O fluxo de desenvolvimento do AntecipIA segue uma máquina de estados estrita at
 ## 🎯 Foco Principal & Jurisdição Exclusiva do @Master
 - **Gatekeeper de Integração:** Análise estática global, validação de suíte de testes (`pnpm tsc`, E2E) e aprovação de PRs/Merges.
 - **Integridade Arquitetural:** Garantir o desacoplamento do Core (Visão/Engines/APIs) em relação às Verticais (B2G Urban e B2B Retail).
-- **Preservação de Histórico:** Sincronização obrigatória de épicos concluídos no arquivo [04_HISTORICO_DO_PROJETO.md](file:///c:/dev/startup-AntecipIA/03_engineering/docs/04_HISTORICO_DO_PROJETO.md).
-- **Aplicação da Lei do Pipeline Estreito:** Impedir que etapas sejam puladas no [HANDOFF.md](file:///c:/dev/startup-AntecipIA/03_engineering/HANDOFF.md).
+- **Preservação de Histórico:** Sincronização obrigatória de épicos concluídos no arquivo [04_HISTORICO_DO_PROJETO.md](docs/04_HISTORICO_DO_PROJETO.md).
+- **Aplicação da Lei do Pipeline Estreito:** Impedir que etapas sejam puladas no [HANDOFF.md](HANDOFF.md).
 
 ---
 
@@ -63,12 +63,12 @@ python .agents/skills/antecipia-master/scripts/validate_handoff_pipeline.py
 ---
 
 ## 🔒 Proteção Estrita de Componentes Core
-Arquivos com barreira máxima de alteração:
-- `antecipia-api/server.ts`
-- `antecipia-api/server/ai_worker/` e engines analíticas (`EventMemory.ts`, `RiskBuilder.ts`, `ContextIA.ts`)
-- `antecipia-api/src/db/schema.ts`
+Arquivos com barreira máxima de alteração (resolver no projeto linkado):
+- backend (`app/api/`, `server.ts` quando existir)
+- workers/engines analíticas do projeto
+- banco (`src/db/schema.ts`, `supabase/`, migrations)
 - `shared/contracts/`
-- `services/antecipia-gateway/`
+- gateway (`services/gateway/`)
 
 *Qualquer alteração nesses arquivos deve conter justificativa técnica explícita e testes de regressão associados.*
 
@@ -79,7 +79,7 @@ Antes de solicitar a aprovação do CTO para o merge:
 1. *Tipagem e Build:* Executei `pnpm tsc --noEmit` na raiz (ou nos workspaces) garantindo 0 erros de compilação?
 2. *Auditoria do Pipeline:* O script `validate_handoff_pipeline.py` retornou status de sucesso (`[OK]`)?
 3. *Blast Radius:* A alteração afetou apenas os domínios autorizados do Épico?
-4. *Sincronização de Docs:* Registrei o fechamento do Épico em [04_HISTORICO_DO_PROJETO.md](file:///c:/dev/startup-AntecipIA/03_engineering/docs/04_HISTORICO_DO_PROJETO.md)?
+4. *Sincronização de Docs:* Registrei o fechamento do Épico em [04_HISTORICO_DO_PROJETO.md](docs/04_HISTORICO_DO_PROJETO.md)?
 5. *Gatekeeper Prompt:* 
    - *Modo Padrão:* Formulei o pedido de confirmação de merge claro para o CTO?
    - *Modo Diretor (via `/goal`):* É PROIBIDO interromper o CTO para pedir aprovação de merge. Se 100% dos testes passaram e a validação do script `validate_handoff_pipeline.py` foi sucesso, **execute o merge automaticamente** (`git checkout develop && git merge feature/...`) e siga para a próxima etapa (deploy ou documentação).

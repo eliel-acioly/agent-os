@@ -1,5 +1,12 @@
-# 💎 ANTECIPIA UI SOTA: O PILAR CENTRAL DA EXCELÊNCIA DIGITAL
-Governança Oficial de Frontend (Psicologia × Estética × Performance)
+---
+name: ui-digital-excellence
+description: Pilar central de excelência digital para frontend (estética, performance, navegação).
+trigger:
+  path: "{app,components}/**/*.{tsx,ts,css}"
+---
+
+# UI SOTA: Pilar Central da Excelência Digital
+Governança de Frontend (Psicologia x Estética x Performance) — agnóstica a projeto.
 
 ---
 

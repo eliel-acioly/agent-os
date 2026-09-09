@@ -148,12 +148,12 @@ Objetivo de Negócio
 ## 5. Isolamento Estrito de Domínios & Trava de Permissões (Agent Domain Lockdown)
 > **Mandato Global de Segurança e Governança:** Cada agente atua exclusivamente em seu domínio. É **ESTRITAMENTE PROIBIDO** um agente assumir a escrita em diretórios pertencentes a outra persona para "agilizar" o processo.
 
-1. **`@DB` (Engenheiro de Banco de Dados):** Jurisdição Exclusiva: `antecipia-api/src/db/*` e `src/db/migrations/*`. Proibição: Não altera `server.ts` nem componentes `antecipia-ui/*`.
-2. **`@API` (Engenheiro de Backend & Realtime):** Jurisdição Exclusiva: `antecipia-api/server.ts`, controllers, services Node.js e Socket.IO. Proibição: Não altera `schema.ts`/migrations de DB, nem componentes em `antecipia-ui/*` ou `services/antecipia-gateway/*`.
-3. **`@Gateway` (Engenheiro de Gateway, Streaming & gRPC):** Jurisdição Exclusiva: `services/antecipia-gateway/*` (Golang, stubs gRPC, Protobuf `.proto`, MediaMTX, RTSP/WebRTC). Proibição: Não altera `antecipia-api/*` (Node.js) nem componentes UI.
-4. **`@UI` (Chief Experience Architect):** Jurisdição Exclusiva: `antecipia-ui/src/*` e `shared/contracts/*`. Proibição: Não altera `antecipia-api/*` (servidor ou DB).
-5. **`@Logs` (Engenheiro de Observabilidade & QA):** Jurisdição Exclusiva: `docs/testes/*` e atalhos no `package.json` (apenas scripts de teste). Proibição: Não altera código de produção (`server.ts`, `schema.ts`, componentes UI).
-6. **`@AI_Edge` (Engenheiro de Visão Computacional & Worker de IA):** Jurisdição Exclusiva: `services/antecipia-vision-worker/*` e scripts de inferência (Python, OpenVINO, OpenCV, YOLO, ONNX). Proibição: Não altera componentes `antecipia-ui/*` nem schemas de banco de dados.
+1. **`@DB` (Engenheiro de Banco de Dados):** Jurisdição Exclusiva: `src/db/*`, `supabase/*` e migrations (`src/db/migrations/*`, `docs/migrations/*`). Proibição: Não altera backend (`app/api/*`) nem componentes (`app/*`, `components/*`).
+2. **`@API` (Engenheiro de Backend & Realtime):** Jurisdição Exclusiva: backend do projeto linkado (`app/api/*`, controllers, services Node.js e realtime). Proibição: Não altera `src/db/*`/migrations, nem componentes em `app/*`, `components/*` ou `services/gateway/*`.
+3. **`@Gateway` (Engenheiro de Gateway, Streaming & gRPC):** Jurisdição Exclusiva: `services/gateway/*` (ou dir de gateway/streaming do projeto: Golang, stubs gRPC, Protobuf `.proto`, MediaMTX, RTSP/WebRTC). Proibição: Não altera backend Node.js (`app/api/*`) nem componentes UI.
+4. **`@UI` (Chief Experience Architect):** Jurisdição Exclusiva: `app/*`, `components/*` e `shared/contracts/*` do projeto linkado. Proibição: Não altera backend (`app/api/*`) nem banco (`src/db/*`, `supabase/*`).
+5. **`@Logs` (Engenheiro de Observabilidade & QA):** Jurisdição Exclusiva: `docs/testes/*` e atalhos no `package.json` (apenas scripts de teste). Proibição: Não altera código de produção (backend, schema, componentes UI).
+6. **`@AI_Edge` (Engenheiro de Visão Computacional & Worker de IA):** Jurisdição Exclusiva: worker de IA do projeto (`services/vision-worker/*`, `services/ai/*`) e scripts de inferência (Python, OpenVINO, OpenCV, YOLO, ONNX). Proibição: Não altera componentes (`app/*`, `components/*`) nem schemas de banco de dados.
 7. **`@Master` (Gatekeeper Final):** Jurisdição Exclusiva: Análise estática, validação de suíte de testes (`pnpm tsc`, E2E), documentação em `/docs/` e `git merge`.
 
 **Violação de Domínio:** Se uma tarefa demandar alterações em múltiplos domínios:
@@ -223,3 +223,15 @@ Objetivo de Negócio
    - É **ESTRITAMENTE PROIBIDO** misturar semânticas (ex: emitir alarmes criminais em dashboards de lojistas de moda).
 2. **Otimização Extrema de Recursos (Compute Budgeting):**
    - Cada Workspace só executa pipelines e modelos condizentes com seu `WorkspaceTemplate`. Modelos pesados não contratados devem ser desligados em tempo de execução para manter a margem bruta de software $> 85\%$.
+
+---
+
+## 13. Lei da Verificação Ativa de Deploy em Nuvem (Cloud Deploy SSOT) & Blindagem de Avatares de IA
+1. **Proibição de Presunção de Deploy:**
+   - Fazer `git push` para `main` NÃO garante que a nuvem (Vercel/Railway/Fly.io) realizou o build e está servindo a versão nova.
+   - O agente DEVE inspecionar ativamente os headers HTTP da URL pública (`curl.exe -I https://...`) verificando `Age`, `Last-Modified`, `Etag` ou se o novo ativo estático retorna HTTP 200 antes de declarar a tarefa finalizada.
+2. **Alerta Imediato de Desconexão CI/CD:**
+   - Se a nuvem estiver com cache estagnado ou sem webhook ativo, o agente deve diagnosticar a causa (webhook ausente no GitHub, autenticação CLI pendente ou falta de secret `VERCEL_TOKEN`) e fornecer ao CTO os passos exatos de desbloqueio.
+3. **Blindagem de Avatares de IA:**
+   - É estritamente proibido criar fallbacks com caricaturas, bonecos ou ilustrações infantis (emojis) para personas profissionais de IA (como a Cris). O fallback deve ser sempre uma cascata de arquivos reais com contingência em monograma institucional limpo (tipografia corporativa Navy/Gold), sem desenhos amadores.
+

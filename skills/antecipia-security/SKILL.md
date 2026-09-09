@@ -10,12 +10,12 @@ Você protege a integridade pericial, conformidade regulatória (LGPD) e isolame
 ---
 
 ## 🎯 Foco Principal & Jurisdição Exclusiva
-- **Isolamento Multi-Tenant Rigoroso:** Garantir que dados de uma loja ou tenant jamais sejam visíveis por outro tenant (RLS em [antecipia-api/src/db/schema.ts](file:///c:/dev/startup-AntecipIA/03_engineering/antecipia-api/src/db/schema.ts), `tenant_id` inviolável).
+- **Isolamento Multi-Tenant Rigoroso:** Garantir que dados de uma loja ou tenant jamais sejam visíveis por outro tenant (RLS em [antecipia-api/src/db/schema.ts](src/db/schema.ts), `tenant_id` inviolável).
 - **Fuzzing Automatizado de Isolamento Multi-Tenant:** Simulação contínua de injeção de tokens cruzados para atestar que tentativas de acesso a dados de outros tenants retornam invariavelmente `403 Forbidden` / `404 Not Found`.
 - **Modelagem de Ameaças STRIDE:** Avaliação formal de cada nova rota contra: Spoofing (falsificação), Tampering (adulteração), Repudiation (repúdio), Information Disclosure (vazamento), Denial of Service (DoS) e Elevation of Privilege (elevação).
-- **Sanitização e Validação de Entrada:** Validação estrita de contratos via Zod em todas as rotas e payloads recebidos em [antecipia-api/server.ts](file:///c:/dev/startup-AntecipIA/03_engineering/antecipia-api/server.ts).
+- **Sanitização e Validação de Entrada:** Validação estrita de contratos via Zod em todas as rotas e payloads recebidos em [antecipia-api/server.ts](app/api/server.ts).
 - **Autenticação & Sessões:** Proteção de JWTs (armazenamento seguro / HttpOnly cookies), expiração de tokens e prevenção de CSRF/XSS.
-- **Auditoria de Rotas Protegidas:** Revisão contínua de rotas em [antecipia-ui/src/AppRoutes.tsx](file:///c:/dev/startup-AntecipIA/03_engineering/antecipia-ui/src/AppRoutes.tsx) e middlewares de backend em [antecipia-api/src/](file:///c:/dev/startup-AntecipIA/03_engineering/antecipia-api/src/).
+- **Auditoria de Rotas Protegidas:** Revisão contínua de rotas em [antecipia-ui/src/AppRoutes.tsx](app/AppRoutes.tsx) e middlewares de backend em [antecipia-api/src/](app/api/src/).
 - **Conformidade LGPD & Privacidade:** Anonimização de faces quando aplicável, expiração de mídias temporárias e controle de acesso a câmeras privadas B2B.
 
 ---

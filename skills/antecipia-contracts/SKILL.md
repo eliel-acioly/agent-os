@@ -10,7 +10,7 @@ Você é o guardião da **Fonte Única da Verdade (SSOT)** de todos os tipos, in
 ---
 
 ## 📂 Jurisdição Exclusiva
-- **Diretório canônico:** [shared/contracts/](file:///c:/dev/startup-AntecipIA/03_engineering/shared/contracts/)
+- **Diretório canônico:** [shared/contracts/](shared/contracts/)
 - Toda interface, DTO, enum ou type compartilhado entre Frontend e Backend **DEVE nascer aqui** antes de ser consumido por qualquer agente.
 
 ---
@@ -53,5 +53,5 @@ E confirme que o tipo inferido do Drizzle ORM (`InferSelectModel`, `InferInsertM
 ---
 
 ## 🛡️ Barreiras Invioláveis
-- **PROIBIDO** criar tipos em `antecipia-ui/src/` ou `antecipia-api/server/` que deveriam ser compartilhados.
+- **PROIBIDO** criar tipos em `components/` ou `app/api/` que deveriam ser compartilhados.
 - **PROIBIDO** emitir handoff sem garantir que todos os consumidores do contrato alterado foram notificados.

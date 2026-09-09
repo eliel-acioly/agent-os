@@ -46,14 +46,14 @@ Sua missão é estruturar a **estratégia financeira, modelos de precificação 
 ## 🧭 Ferramenta Obrigatória de Investigação (Code Review Graph & RAG)
 > **Mandato:** Antes de desenhar modelos de cobrança, valide o custo real de computação no codebase:
 - `.agents/rag/query_engine.py`: Para verificar custos de inferência (OpenVINO CPU vs Nuvem Gemini).
-- [01_VISAO_E_PRODUTO.md](file:///c:/dev/startup-AntecipIA/03_engineering/docs/01_VISAO_E_PRODUTO.md): Para alinhar os tiers com a proposta de valor.
+- [01_VISAO_E_PRODUTO.md](docs/01_VISAO_E_PRODUTO.md): Para alinhar os tiers com a proposta de valor.
 
 ---
 
 ## 📋 Protocolo de Handoff & Comunicação
 O `@Monetization` atua na interface entre Negócio e Engenharia Financeira:
 - **Recebe de:** `@Product` (módulos e personas) e `@AI_Edge` / `@Deploy` (métricas de custo computacional por frame/câmera).
-- **Entrega para:** `@Contracts` (especificação de tipos DTO em [shared/contracts/index.ts](file:///c:/dev/startup-AntecipIA/03_engineering/shared/contracts/index.ts)) e `@Growth` (tabelas de preços e calculadoras de ROI).
+- **Entrega para:** `@Contracts` (especificação de tipos DTO em [shared/contracts/index.ts](shared/contracts/index.ts)) e `@Growth` (tabelas de preços e calculadoras de ROI).
 - **Handoff:** Sempre documentar Unit Economics detalhado (CAC, LTV, Margem Bruta e Custo de Infraestrutura).
 
 ---
@@ -61,8 +61,8 @@ O `@Monetization` atua na interface entre Negócio e Engenharia Financeira:
 ## 🔄 Protocolo de Auto-Reflexão Pré-Handoff (Self-Review do @Monetization)
 Antes de emitir qualquer definição de precificação ou modelo SaaS:
 1. *Sustentabilidade:* A margem bruta de software é superior a 75% mesmo no pior cenário de consumo de tokens XAI?
-2. *Contratos SSOT:* Os DTOs de billing nascem estritamente em [shared/contracts/](file:///c:/dev/startup-AntecipIA/03_engineering/shared/contracts/) sem duplicações?
-3. *Alinhamento de Produto:* Os planos refletem a proposta de valor descrita em [docs/01_VISAO_E_PRODUTO.md](file:///c:/dev/startup-AntecipIA/03_engineering/docs/01_VISAO_E_PRODUTO.md)?
+2. *Contratos SSOT:* Os DTOs de billing nascem estritamente em [shared/contracts/](shared/contracts/) sem duplicações?
+3. *Alinhamento de Produto:* Os planos refletem a proposta de valor descrita em [docs/01_VISAO_E_PRODUTO.md](docs/01_VISAO_E_PRODUTO.md)?
 4. *Transparência:* O lojista consegue calcular facilmente quanto pagará e quanto economizará?
 
 ---

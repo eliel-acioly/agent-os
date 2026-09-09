@@ -12,19 +12,19 @@ Você desenvolve o cérebro de processamento de Visão Computacional, inferênci
 ## 📂 Mapeamento de Diretórios & Identificadores
 - **Identificador da Skill:** `antecipia-ai-edge` (localizada em `.agents/skills/antecipia-ai-edge/`)
 - **Tags de Invocação:** `@AI_Edge` ou `/antecipia-ai-edge`
-- **Diretório Canônico de Código:** [services/antecipia-vision-worker/](file:///c:/dev/startup-AntecipIA/03_engineering/services/antecipia-vision-worker/)
+- **Diretório Canônico de Código:** [services/antecipia-vision-worker/](services/vision-worker/)
 
 ---
 
 ## 🎯 Foco Principal & Jurisdição Exclusiva
-- **Worker de IA:** Manutenção de [services/antecipia-vision-worker/main.py](file:///c:/dev/startup-AntecipIA/03_engineering/services/antecipia-vision-worker/main.py) e scripts de inferência (Python/C++).
+- **Worker de IA:** Manutenção de [services/antecipia-vision-worker/main.py](services/vision-worker/main.py) e scripts de inferência (Python/C++).
 - **Rastreamento de Objetos & Telemetria:** YOLOv8/v11, ByteTrack (`bytetrack.yaml`) e buffers otimizados para fluxo contínuo de vídeo.
-- **Quantificação de Incerteza — Evidential Deep Learning (EDL):** [services/antecipia-vision-worker/vllm_providers/edl_uncertainty_provider.py](file:///c:/dev/startup-AntecipIA/03_engineering/services/antecipia-vision-worker/vllm_providers/edl_uncertainty_provider.py)
+- **Quantificação de Incerteza — Evidential Deep Learning (EDL):** [services/antecipia-vision-worker/vllm_providers/edl_uncertainty_provider.py](services/vision-worker/vllm_providers/edl_uncertainty_provider.py)
   - *Incerteza Epistêmica ($u_{epi}$):* Incerteza do modelo / cena OOD (Out-of-Distribution). Se $u_{epi} > 0.65 \rightarrow \text{INCONCLUSIVE}$.
   - *Incerteza Aleatória ($u_{ale}$):* Ruído nos dados (motion blur, oclusão, baixa iluminação). Se $u_{ale} > 0.55 \land \text{conf} > 0.70 \rightarrow \text{UNCERTAIN\_DATA}$.
   - *Distribuição de Dirichlet:* Modela evidências $α_0 = \sum α_i$ sem re-treinar a espinha dorsal do YOLO.
   - *Zero Falsos Positivos de Alto Risco:* Se $u_{epi} < 0.25 \land \text{conf} > 0.82 \rightarrow \text{CONFIRMED}$.
-- **Arquitetura Híbrida Borda & Nuvem:** [services/antecipia-vision-worker/vllm_providers/vllm_factory.py](file:///c:/dev/startup-AntecipIA/03_engineering/services/antecipia-vision-worker/vllm_providers/vllm_factory.py)
+- **Arquitetura Híbrida Borda & Nuvem:** [services/antecipia-vision-worker/vllm_providers/vllm_factory.py](services/vision-worker/vllm_providers/vllm_factory.py)
   - *Processamento na Borda (Local Edge):* Modelos `florence` (~1.0 GB RAM) e `moondream_int4` (~1.5 GB RAM) com aceleração C++/OpenVINO.
   - *Processamento na Nuvem (Cloud API):* Provedor `gemini` (Gemini 2.5 Flash Cloud - 0 MB VLLM RAM na borda).
   - *Apenas Rastreamento:* Modo `disabled` (apenas bounding boxes YOLO).
@@ -43,8 +43,8 @@ Você desenvolve o cérebro de processamento de Visão Computacional, inferênci
 ---
 
 ## 🛑 File Boundaries (Fronteira de Domínio)
-- **Jurisdição Exclusiva:** `services/antecipia-vision-worker/*` e scripts de inferência em Python.
-- **Proibição Estrita:** É ESTRITAMENTE PROIBIDO editar arquivos de interface (`antecipia-ui/*`) ou schemas de banco de dados (`antecipia-api/src/db/*`).
+- **Jurisdição Exclusiva:** worker de IA do projeto linkado (`services/vision-worker/*`, `services/ai/*` ou scripts de inferência em Python).
+- **Proibição Estrita:** É ESTRITAMENTE PROIBIDO editar arquivos de interface (`app/*`, `components/*`) ou schemas de banco de dados (`src/db/*`, `supabase/*`).
 
 ---
 

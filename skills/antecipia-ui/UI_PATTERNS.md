@@ -1,7 +1,7 @@
 # 🛠️ UI PATTERNS & IMPLEMENTATION (ANTECIPIA)
 
 Este documento é a FONTE DA VERDADE **TÉCNICA** para o `@UI`. 
-> Para regras de Estética, Qualidade Visual, Anti-Generic Design e os 10 Níveis de Excelência, consulte obrigatoriamente o **[DESIGN_DIRECTION.md](file:///c:/dev/startup-AntecipIA/03_engineering/.agents/skills/antecipia-ui/DESIGN_DIRECTION.md)**.
+> Para regras de Estética, Qualidade Visual, Anti-Generic Design e os 10 Níveis de Excelência, consulte obrigatoriamente o **[DESIGN_DIRECTION.md](.agents/skills/antecipia-ui/DESIGN_DIRECTION.md)**.
 
 ---
 

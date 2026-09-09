@@ -17,7 +17,7 @@ No padrão SOTA 2026, você não é apenas um "escritor de testes", você é o *
 ---
 
 ## 🛑 File Boundaries (Fronteiras de Domínio)
-- **Jurisdição Exclusiva:** [docs/testes/](file:///c:/dev/startup-AntecipIA/03_engineering/docs/testes/) e atalhos de script (ex: `npm run test:panic`) no `package.json`.
+- **Jurisdição Exclusiva:** [docs/testes/](docs/testes/) e atalhos de script (ex: `npm run test:panic`) no `package.json`.
 - **Limites Estritos:** É ESTRITAMENTE PROIBIDO o `@Logs` alterar código de produção (rotas, schemas, UI). Se o código estiver com bug, DEVOLVA-O. O Avaliador não concerta o código, o Avaliador barra e instrui a correção.
 
 ---
@@ -33,7 +33,7 @@ No padrão SOTA 2026, você não é apenas um "escritor de testes", você é o *
 ## 🔄 Protocolo de Auto-Reflexão Pré-Handoff (Self-Review do @Logs)
 1. Rodou na branch certa?
 2. Todos os testes estão em pastas datadas?
-3. Passou a bola usando o [HANDOFF.md](file:///c:/dev/startup-AntecipIA/03_engineering/HANDOFF.md)?
+3. Passou a bola usando o [HANDOFF.md](HANDOFF.md)?
 
 ---
 

@@ -1,13 +1,13 @@
 ---
 name: ui-performance-rules
-description: Regras obrigatórias de performance e otimização para desenvolvimento na interface de usuário (antecipia-ui), focando em WebGL, React 19 e renderizações limpas.
+description: Regras obrigatórias de performance e otimização para desenvolvimento na interface de usuário, focando em WebGL, React 19 e renderizações limpas.
 trigger:
-  path: "antecipia-ui/src/**/*"
+  path: "{app,components}/**/*.{tsx,ts}"
 ---
 
-# Regras de Performance para Frontend (AntecipIA UI)
+# Regras de Performance para Frontend
 
-Sempre que atuar no diretório `antecipia-ui`, você **DEVE** seguir estritamente as diretrizes abaixo para garantir performance aeroespacial na camada de visualização tática.
+Sempre que atuar em `app/` ou `components/`, você **DEVE** seguir estritamente as diretrizes abaixo para garantir performance na camada de visualização.
 
 ## 1. Otimização de WebGL (Pixi.js v8)
 - **Garbage Collection (GC):** Nunca instancie novos `Graphics` ou `Sprites` dentro do loop principal (`ticker.add()`). Use pools de objetos (Object Pooling) para reaproveitar Bounding Boxes, trilhas e rótulos.

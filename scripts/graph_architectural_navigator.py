@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 """
-ANTECIPIA — GRAPH ARCHITECTURAL NAVIGATOR & GROUNDING ENGINE (SOTA 2026)
-Inspirado na arquitetura GraphRAG de alta performance (Padrão NASA / SpaceX / Palantir)
-
+AGENT-OS — GRAPH ARCHITECTURAL NAVIGATOR & GROUNDING ENGINE (agnóstico a projeto)
 Capacidades:
-1. Inspeção Ontológica & Arquitetural de Componentes.
-2. Análise de Raio de Impacto Multi-Salto (Multi-Hop Blast Radius).
-3. Verificação Estrita de Ancoragem em Grafo (Graph Grounding Anti-Alucinação).
-4. Particionamento Hierárquico de Comunidades (C0, C1, C2, C3).
+1. Inspeção de componentes do PROJETO LINKADO (catálogo por projeto se existir).
+2. Análise de Raio de Impacto Multi-Salto (via blast_radius real + AST se disponível).
+3. Verificação de ancoragem (catalog por projeto + AST + filesystem — anti-alucinação).
+4. Comunidades hierárquicas (por projeto se existir, senão genéricas).
 """
 
 import sys
@@ -16,6 +14,7 @@ import sqlite3
 import argparse
 import json
 import re
+from pathlib import Path
 
 # Garante saída UTF-8 no terminal Windows
 if sys.stdout.encoding != 'utf-8':
@@ -24,10 +23,27 @@ if sys.stdout.encoding != 'utf-8':
     except Exception:
         pass
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-GRAPH_DB_PATH = os.path.join(REPO_ROOT, ".code-review-graph", "graph.db")
+sys.path.insert(0, str(Path(__file__).parent))
+try:
+    from project_context import get_project_root, get_agents_dir, get_project_slug
+    PROJECT_ROOT = str(get_project_root())
+    PROJECT_SLUG = get_project_slug(Path(PROJECT_ROOT))
+except Exception:
+    REPO_ROOT_FALLBACK = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    PROJECT_ROOT = os.getcwd() if os.path.isdir(os.path.join(os.getcwd(), ".agents")) else REPO_ROOT_FALLBACK
+    PROJECT_SLUG = os.path.basename(PROJECT_ROOT) or "proj"
 
-# Base de Conhecimento Arquitetural (Mapeamento Estrito das 14 Specs Canônicas)
+REPO_ROOT = PROJECT_ROOT
+GRAPH_DB_PATH = os.path.join(REPO_ROOT, ".code-review-graph", "graph.db")
+# Catálogo por projeto (opt-in): docs/architecture/catalog.json ou .agents/memory/projects/<slug>/catalog.json
+PROJECT_CATALOG_PATHS = [
+    os.path.join(REPO_ROOT, "docs", "architecture", "catalog.json"),
+    os.path.join(REPO_ROOT, ".agents", "memory", "projects", PROJECT_SLUG, "catalog.json"),
+]
+
+# Base de Conhecimento Arquitetural LEGADA (exemplo AntecipIA — mantida como fallback).
+# Para o projeto linkado, crie docs/architecture/catalog.json com o mesmo formato
+# {"Componente": {"community": "...", "description": "...", ...}} para substituir.
 ARCHITECTURAL_CATALOG = {
     "TenantsController": {
         "community": "C1_RETAIL_SALON",
@@ -112,7 +128,7 @@ ARCHITECTURAL_CATALOG = {
     }
 }
 
-# Macro-Comunidades Hierárquicas (C0 a C3)
+# Macro-Comunidades Hierárquicas LEGADAS (fallback). Por projeto: docs/architecture/communities.json
 COMMUNITY_DEFINITIONS = {
     "C0_CORE_PLATFORM": {
         "title": "Núcleo Cognitivo Universal",
@@ -140,6 +156,53 @@ COMMUNITY_DEFINITIONS = {
         "components": ["ontology.ts", "onboarding.ts", "alert-channels.ts", "connect.ts", "retail-analytics.ts"]
     }
 }
+
+def _load_project_catalog() -> dict:
+    for p in PROJECT_CATALOG_PATHS:
+        try:
+            if os.path.isfile(p):
+                with open(p, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if isinstance(data, dict) and data:
+                        return data
+        except Exception:
+            continue
+    return {}
+
+
+def _effective_catalog() -> dict:
+    proj = _load_project_catalog()
+    if proj:
+        return proj
+    return ARCHITECTURAL_CATALOG
+
+
+def _term_exists_in_project(term: str) -> str | None:
+    """Verifica se o termo existe como arquivo/símbolo no projeto linkado (fallback filesystem)."""
+    t = (term or "").strip()
+    if not t:
+        return None
+    # Caminho direto?
+    for cand in (t, t + ".ts", t + ".tsx", t + ".py"):
+        if os.path.isfile(os.path.join(REPO_ROOT, cand.replace("/", os.sep))):
+            return cand
+    # Busca por nome de arquivo (limitada, rápida)
+    base = t.split("/")[-1].lower()
+    if len(base) < 3:
+        return None
+    try:
+        for root, dirs, files in os.walk(REPO_ROOT, topdown=True):
+            dirs[:] = [d for d in dirs if d not in ("node_modules", ".next", ".git", "dist", "__pycache__", ".agents")]
+            for fn in files:
+                if base in fn.lower():
+                    rel = os.path.relpath(os.path.join(root, fn), REPO_ROOT).replace(os.sep, "/")
+                    return rel
+            # Limita profundidade para não varrer tudo
+            if root.count(os.sep) - REPO_ROOT.count(os.sep) > 5:
+                dirs[:] = []
+    except Exception:
+        return None
+    return None
 
 def query_ast_graph(target_symbol):
     """Consulta chamadores, dependências e imports na base SQLite graph.db"""
@@ -177,63 +240,94 @@ def query_ast_graph(target_symbol):
     return {"nodes": nodes, "callers": callers, "callees": callees}
 
 def compute_multi_hop_blast_radius(symbol):
-    """Calcula o raio de impacto em 5 saltos topológicos (Padrão Google / Palantir)"""
+    """Calcula o raio de impacto em 5 saltos (catálogo do projeto + AST + defaults genéricos)"""
     ast = query_ast_graph(symbol)
     catalog = None
-    for k, v in ARCHITECTURAL_CATALOG.items():
+    for k, v in _effective_catalog().items():
         if k.lower() in symbol.lower():
             catalog = v
             break
 
     hops = {
         "hop_1_ast_callers": [c["caller"] for c in ast["callers"]],
-        "hop_2_contracts": catalog["contracts"] if catalog else ["shared/contracts/"],
-        "hop_3_spec": catalog["authorizing_spec"] if catalog else "Especificação Canônica do Módulo",
-        "hop_4_protected_tests": catalog["tests"] if catalog else ["docs/testes/2026-08/test_fase_d_pilot_ready_e2e.ts"],
-        "hop_5_community": catalog["community"] if catalog else "C0_CORE_PLATFORM"
+        "hop_2_contracts": catalog.get("contracts", ["shared/contracts/"]) if catalog else ["shared/contracts/"],
+        "hop_3_spec": catalog.get("authorizing_spec", "Especificação do módulo") if catalog else "Especificação do módulo",
+        "hop_4_protected_tests": catalog.get("tests", ["docs/testes/"]) if catalog else ["docs/testes/"],
+        "hop_5_community": catalog.get("community", "C0_CORE") if catalog else "C0_CORE"
     }
     return hops
 
 def verify_graph_grounding(terms_list):
-    """Verifica se os termos citados possuem existência comprovada no Grafo AST ou Catálogo (Anti-Alucinação)"""
+    """Verifica termos contra catálogo do projeto, AST e filesystem (anti-alucinação)"""
     results = []
     conn = None
     if os.path.exists(GRAPH_DB_PATH):
-        conn = sqlite3.connect(GRAPH_DB_PATH)
-    
+        try:
+            conn = sqlite3.connect(GRAPH_DB_PATH)
+        except Exception:
+            conn = None
+    catalog = _effective_catalog()
+
     for term in terms_list:
         term_clean = term.strip()
         if not term_clean:
             continue
-        
-        # 1. Verifica no Catálogo
-        in_catalog = any(term_clean.lower() in k.lower() for k in ARCHITECTURAL_CATALOG.keys())
-        
-        # 2. Verifica no SQLite AST
+
+        # 1. Catálogo do projeto (ou legado como fallback)
+        in_catalog = any(term_clean.lower() in k.lower() for k in catalog.keys())
+
+        # 2. SQLite AST
         in_ast = False
         if conn:
-            c = conn.cursor()
-            c.execute("SELECT 1 FROM nodes WHERE qualified_name LIKE ? LIMIT 1", (f"%{term_clean}%",))
-            in_ast = c.fetchone() is not None
+            try:
+                c = conn.cursor()
+                c.execute("SELECT 1 FROM nodes WHERE qualified_name LIKE ? LIMIT 1", (f"%{term_clean}%",))
+                in_ast = c.fetchone() is not None
+            except Exception:
+                in_ast = False
 
-        grounded = in_catalog or in_ast
+        # 3. Filesystem do projeto linkado (evita falso UNVERIFIED para componentes reais)
+        fs_hit = _term_exists_in_project(term_clean)
+        in_fs = fs_hit is not None
+
+        grounded = in_catalog or in_ast or in_fs
+        if in_catalog:
+            source = "CATALOG"
+        elif in_ast:
+            source = "AST_GRAPH"
+        elif in_fs:
+            source = f"FILESYSTEM:{fs_hit}"
+        else:
+            source = "NONE"
         results.append({
             "term": term_clean,
             "grounded": grounded,
             "status": "GROUNDED" if grounded else "UNVERIFIED_HALLUCINATION_RISK",
-            "source": "CATALOG" if in_catalog else ("AST_GRAPH" if in_ast else "NONE")
+            "source": source
         })
 
     if conn:
-        conn.close()
+        try:
+            conn.close()
+        except Exception:
+            pass
     return results
 
 def list_communities():
-    """Retorna as macro-comunidades hierárquicas do AntecipIA"""
+    """Retorna comunidades do projeto (ou fallback genérico)."""
+    proj_path = os.path.join(REPO_ROOT, "docs", "architecture", "communities.json")
+    try:
+        if os.path.isfile(proj_path):
+            with open(proj_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, dict) and data:
+                    return data
+    except Exception:
+        pass
     return COMMUNITY_DEFINITIONS
 
 def main():
-    parser = argparse.ArgumentParser(description="AntecipIA Graph Architectural Navigator & Grounding Engine")
+    parser = argparse.ArgumentParser(description="Agent-OS Graph Architectural Navigator & Grounding Engine (por projeto)")
     parser.add_argument("--component", "-c", help="Nome do componente, classe ou função a investigar")
     parser.add_argument("--blast-radius", action="store_true", help="Calcula o raio de impacto multi-salto do componente")
     parser.add_argument("--grounding-check", nargs="+", help="Verifica lista de termos contra o grafo para barrar alucinações")
@@ -276,7 +370,7 @@ def main():
     if args.component:
         symbol = args.component
         catalog_info = None
-        for k, v in ARCHITECTURAL_CATALOG.items():
+        for k, v in _effective_catalog().items():
             if k.lower() in symbol.lower():
                 catalog_info = v
                 break
@@ -285,15 +379,16 @@ def main():
         blast_radius = compute_multi_hop_blast_radius(symbol) if args.blast_radius else None
 
         report = {
+            "project": PROJECT_SLUG,
             "component": symbol,
             "is_cataloged": catalog_info is not None,
-            "community": catalog_info["community"] if catalog_info else "C0_CORE_PLATFORM",
-            "description": catalog_info["description"] if catalog_info else "Componente presente no monorepo.",
-            "ontology_entity": catalog_info["ontology_entity"] if catalog_info else "Mapeado via nós de execução",
-            "authorizing_spec": catalog_info["authorizing_spec"] if catalog_info else "Consulte specs/* correspondente ao módulo",
-            "contracts": catalog_info["contracts"] if catalog_info else [],
-            "adrs": catalog_info["adrs"] if catalog_info else [],
-            "tests": catalog_info["tests"] if catalog_info else [],
+            "community": (catalog_info.get("community", "C0_CORE") if catalog_info else "C0_CORE"),
+            "description": (catalog_info.get("description", "Componente do projeto.") if catalog_info else "Componente do projeto."),
+            "ontology_entity": (catalog_info.get("ontology_entity", "Mapeado via filesystem/AST") if catalog_info else "Mapeado via filesystem/AST"),
+            "authorizing_spec": (catalog_info.get("authorizing_spec", "Consulte docs/specs correspondente") if catalog_info else "Consulte docs/specs correspondente"),
+            "contracts": (catalog_info.get("contracts", []) if catalog_info else []),
+            "adrs": (catalog_info.get("adrs", []) if catalog_info else []),
+            "tests": (catalog_info.get("tests", []) if catalog_info else []),
             "ast_nodes": ast_info.get("nodes", []),
             "callers": ast_info.get("callers", []),
             "callees": ast_info.get("callees", []),
@@ -304,7 +399,7 @@ def main():
             print(json.dumps(report, indent=2, ensure_ascii=False))
         else:
             print("=" * 70)
-            print(f"  ANTECIPIA GRAPH ARCHITECTURAL NAVIGATOR: {symbol}")
+            print(f"  GRAPH ARCHITECTURAL NAVIGATOR [{PROJECT_SLUG}]: {symbol}")
             print("=" * 70)
             print(f"[Comunidade]: {report['community']}")
             print(f"[Propósito]: {report['description']}")

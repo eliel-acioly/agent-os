@@ -17,8 +17,18 @@ if hasattr(sys.stdout, 'reconfigure'):
 
 import argparse
 
-AGENTS_DIR = Path(__file__).parent.parent
-ROOT = AGENTS_DIR.parent
+sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
+try:
+    from project_context import get_project_root, get_agents_dir, get_project_slug
+    PROJECT_ROOT = get_project_root()
+    AGENTS_DIR = get_agents_dir()
+    PROJECT_SLUG = get_project_slug(PROJECT_ROOT)
+except Exception:
+    AGENTS_DIR = Path(__file__).parent.parent
+    PROJECT_ROOT = Path.cwd()
+    PROJECT_SLUG = "proj"
+
+ROOT = PROJECT_ROOT
 MEMORY_DIR = AGENTS_DIR / "memory"
 SESSION_LOG = MEMORY_DIR / "session_log.jsonl"
 EVOLUTION_LOG = AGENTS_DIR / "self_improvement" / "evolution_history.json"
@@ -79,8 +89,8 @@ def main():
     cycle_id = f"EVOLVE-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
 
     print(f"\n{SEPARATOR}")
-    print(f"  🌌 AntecipIA Autonomous Self-Evolution Engine — {cycle_id}")
-    print(f"  Padrão Aeroespacial: NASA JPL / SpaceX Mission Critical v3.0")
+    print(f"  Agent-OS Autonomous Self-Evolution Engine [{PROJECT_SLUG}] — {cycle_id}")
+    print(f"  Root: {PROJECT_ROOT}")
     print(f"  Início do Ciclo: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(SEPARATOR)
 

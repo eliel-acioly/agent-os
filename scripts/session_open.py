@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """
-session_open.py — AntecipIA Agent Platform v2.0
+session_open.py — Agent-OS (agnóstico a projeto)
 Abre uma sessão de agente carregando:
-  1. Memória persistente (knowledge_base.json)
-  2. Snapshot do code-review-graph (estado do projeto)
-  3. Contexto RAG semântico relevante ao agente (ChromaDB)
+  1. Memória persistente (knowledge_base.json compartilhada + sessão por projeto)
+  2. Snapshot do projeto linkado (memory/projects/<slug>/)
+  3. Contexto RAG do projeto linkado (ChromaDB por slug)
 Uso: python .agents/scripts/session_open.py [--agent NOME] [--query "contexto específico"] [--no-rag]
 """
 
 import sys
 import json
+import os
+import time
 import argparse
 from pathlib import Path
 from datetime import datetime
@@ -17,12 +19,19 @@ from datetime import datetime
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
-AGENTS_DIR = Path(__file__).parent.parent
+sys.path.insert(0, str(Path(__file__).parent))
+from project_context import get_project_root, get_agents_dir, get_project_slug, get_project_memory_dir
+
+PROJECT_ROOT = get_project_root()
+AGENTS_DIR = get_agents_dir()
+PROJECT_SLUG = get_project_slug(PROJECT_ROOT)
+PROJECT_MEMORY_DIR = get_project_memory_dir(PROJECT_ROOT, AGENTS_DIR)
 MEMORY_DIR = AGENTS_DIR / "memory"
 KNOWLEDGE_BASE = MEMORY_DIR / "knowledge_base.json"
 METRICS_FILE = MEMORY_DIR / "agent_metrics.json"
 SESSION_LOG = MEMORY_DIR / "session_log.jsonl"
-HANDOFF_FILE = Path("HANDOFF.md")
+PROJECT_SESSION_LOG = PROJECT_MEMORY_DIR / "session_log.jsonl"
+HANDOFF_FILE = PROJECT_ROOT / "HANDOFF.md"
 
 SEPARATOR = "═" * 65
 
@@ -33,8 +42,9 @@ def load_json(path: Path) -> dict:
 
 def print_header(agent_name: str):
     print(f"\n{SEPARATOR}")
-    print(f"  🤖 AntecipIA Agent Platform v2.0 — Sessão Iniciada")
+    print(f"  Agent-OS — Sessão Iniciada (projeto: {PROJECT_SLUG})")
     print(f"  Agente Ativo: @{agent_name}")
+    print(f"  Root: {PROJECT_ROOT}")
     print(f"  Data/Hora: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(SEPARATOR)
 
@@ -89,14 +99,26 @@ def print_handoff_context():
     for line in lines:
         print(f"  {line}")
 
-def write_session_log(agent_name: str):
+def write_session_log(agent_name: str, start_ts: float, tokens_estimate: int = 0):
+    model = os.environ.get("AGENT_LLM_MODEL") or os.environ.get("LLM_MODEL") or "ide-llm"
     entry = {
         "timestamp": datetime.now().isoformat(),
+        "project": PROJECT_SLUG,
+        "project_root": str(PROJECT_ROOT),
         "agent": agent_name,
-        "event": "session_opened"
+        "event": "session_opened",
+        "duration_ms": round((time.time() - start_ts) * 1000, 2),
+        "model": model,
+        "tokens_estimated": tokens_estimate,
+        "decision": "context_loaded"
     }
-    with open(SESSION_LOG, "a", encoding="utf-8") as f:
-        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    for log_path in (PROJECT_SESSION_LOG, SESSION_LOG):
+        try:
+            log_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(log_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        except Exception:
+            continue
 
 def print_rag_context(agent_name: str, query: str):
     """Exibe contexto RAG semântico do projeto."""
@@ -119,6 +141,7 @@ def main():
                         help="Pular consulta RAG (mais rápido, sem contexto de código)")
     args = parser.parse_args()
     agent_name = args.agent.strip().replace("@", "")
+    start_ts = time.time()
 
     kb = load_json(KNOWLEDGE_BASE)
     metrics = load_json(METRICS_FILE)
@@ -137,7 +160,12 @@ def main():
     print("  ✅ Contexto carregado. O agente está pronto para operar.")
     print(SEPARATOR + "\n")
 
-    write_session_log(agent_name)
+    # Estimativa conservadora de tokens de contexto carregado (heurística ~4 chars/token)
+    tokens_estimate = 0
+    for _path in (KNOWLEDGE_BASE, METRICS_FILE):
+        if _path.exists():
+            tokens_estimate += _path.stat().st_size // 4
+    write_session_log(agent_name, start_ts, tokens_estimate)
 
 if __name__ == "__main__":
     main()

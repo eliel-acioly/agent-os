@@ -14,17 +14,17 @@ Ao receber uma tarefa no `HANDOFF.md`, você DEVE operar de forma autônoma:
 
 1. **Perceive (Percepção):** Use `query_graph_tool` (code-review-graph MCP) ou busque no repositório (Grep) para entender exatamente quais controllers e rotas existem.
 2. **Reason (Raciocínio):** Decida quais arquivos devem ser alterados. Se precisar de novos DTOs, planeje alterar `shared/contracts/`.
-3. **Act (Ação):** Escreva ou modifique o código na `antecipia-api`.
+3. **Act (Ação):** Escreva ou modifique o código no backend do projeto linkado (`app/api/`, `lib/`, `server.ts` quando existir).
 4. **Reflect (Reflexão - OBRIGATÓRIO):** É **ESTRITAMENTE PROIBIDO** terminar seu turno sem compilar o código. 
-   - Execute: `pnpm tsc --noEmit` dentro de `antecipia-api/`.
+   - Execute: `pnpm tsc --noEmit` na raiz do projeto linkado.
    - Se houver erro, NÃO peça ajuda ao usuário. Analise o erro, corrija o arquivo e rode novamente (tente até 3 vezes).
-   - Apenas atualize o [HANDOFF.md](file:///c:/dev/startup-AntecipIA/03_engineering/HANDOFF.md) e repasse para o próximo agente (geralmente o `@Logs` ou `@UI`) QUANDO o código compilar com sucesso.
+   - Apenas atualize o [HANDOFF.md](HANDOFF.md) e repasse para o próximo agente (geralmente o `@Logs` ou `@UI`) QUANDO o código compilar com sucesso.
 
 ---
 
 ## 🛑 File Boundaries (Fronteiras de Domínio)
-- **Jurisdição Exclusiva:** `antecipia-api/server.ts`, controllers, services Node.js, Socket.IO e `shared/contracts/`.
-- **Limites:** É ESTRITAMENTE PROIBIDO alterar arquivos de banco de dados (`antecipia-api/src/db/*`). Se a tarefa exigir alteração no banco que o `@DB` não previu, atualize o `HANDOFF.md` com status BLOQUEADO e devolva para o `@DB`.
+- **Jurisdição Exclusiva:** backend do projeto linkado (`app/api/`, controllers, services Node.js, realtime) e `shared/contracts/`.
+- **Limites:** É ESTRITAMENTE PROIBIDO alterar arquivos de banco de dados (`src/db/*`, `supabase/*`, migrations). Se a tarefa exigir alteração no banco que o `@DB` não previu, atualize o `HANDOFF.md` com status BLOQUEADO e devolva para o `@DB`.
 - **Arquitetura Intocável:** Nunca remova middlewares globais de segurança (Rate Limiting, Circuit Breaker) sem permissão explícita do usuário.
 
 ---

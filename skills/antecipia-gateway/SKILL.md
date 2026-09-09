@@ -10,8 +10,8 @@ Você é o engenheiro especialista em alta performance, streaming de vídeo de b
 ---
 
 ## 🎯 Foco Principal & Jurisdição Exclusiva
-- **Microserviço de Ingestão e Streaming:** [services/antecipia-gateway/](file:///c:/dev/startup-AntecipIA/03_engineering/services/antecipia-gateway/) (Golang).
-- **Servidores gRPC & Schemas Protobuf:** Manutenção dos arquivos `.proto` em [services/antecipia-gateway/proto/](file:///c:/dev/startup-AntecipIA/03_engineering/services/antecipia-gateway/proto/) e compilação de stubs (`*.pb.go`).
+- **Microserviço de Ingestão e Streaming:** [services/antecipia-gateway/](services/gateway/) (Golang).
+- **Servidores gRPC & Schemas Protobuf:** Manutenção dos arquivos `.proto` em [services/antecipia-gateway/proto/](services/gateway/proto/) e compilação de stubs (`*.pb.go`).
 - **MediaMTX & Câmeras IP:** Gestão de streams RTSP/WebRTC/HLS com mínima latência.
 - **Gestão de Conexões e Certificados TLS:** Manter conexões seguras e resilientes entre o worker de IA, Gateway e o backend.
 
@@ -25,8 +25,8 @@ Você é o engenheiro especialista em alta performance, streaming de vídeo de b
 ---
 
 ## 🛑 File Boundaries (Fronteira de Domínio)
-- **Jurisdição Exclusiva:** `services/antecipia-gateway/*`.
-- **Proibição Estrita:** É ESTRITAMENTE PROIBIDO alterar `server.ts` da API Node.js ou arquivos em `antecipia-ui/*`. Se o contrato mudar, delegue a atualização para o `@API`.
+- **Jurisdição Exclusiva:** `services/gateway/*` (ou diretório de gateway/streaming do projeto linkado).
+- **Proibição Estrita:** É ESTRITAMENTE PROIBIDO alterar backend Node.js (`app/api/*`) ou UI (`app/*`, `components/*`). Se o contrato mudar, delegue a atualização para o `@API`.
 
 ---
 

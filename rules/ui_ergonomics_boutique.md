@@ -1,13 +1,13 @@
 ---
 name: ui-ergonomics-boutique-rules
-description: Regras obrigatórias de usabilidade, ergonomia e design de luxo B2B para o módulo Lojista Boutique (antecipia-ui).
+description: Regras obrigatórias de usabilidade, ergonomia e design de luxo B2B para o módulo Lojista/Admin.
 trigger:
-  path: "antecipia-ui/src/modules/admin/**/*"
+  path: "{app/(dashboard),components/admin,components/seller}/**/*"
 ---
 
 # Regras de Usabilidade e Luxo B2B (Lojista Boutique)
 
-Quando estiver trabalhando nos painéis ou visualizações do módulo Boutique (`antecipia-ui/src/modules/admin`), você **DEVE** seguir estas diretrizes visuais e de design. O cliente Boutique B2B não quer ver "código" ou "interface poluída", ele espera uma experiência neuromórfica e refinada.
+Quando estiver trabalhando nos painéis ou visualizações do módulo Admin/Lojista (`app/(dashboard)`, `components/admin`, `components/seller`), você **DEVE** seguir estas diretrizes visuais e de design. O cliente Boutique B2B não quer ver "código" ou "interface poluída", ele espera uma experiência refinada.
 
 ## 1. Design de Luxo & Minimalismo (High-Contrast Elegante)
 - **Paleta de Cores:** Evite o uso de vermelhos e verdes saturados (`bg-red-500`, `bg-green-500`). Substitua por tons brandos ou borders semânticos (`border-red-500/20`, texto em `text-rose-400`).

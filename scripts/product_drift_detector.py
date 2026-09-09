@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """
-ANTECIPIA — PRODUCT DRIFT DETECTOR (SOTA 2026)
-Executa auditoria no código em busca de conceitos e métodos que possam indicar
-deriva de produto (tentativa de transformar o AntecipIA em PDV, ERP, CRM, WMS ou emissor fiscal).
+AGENT-OS — PRODUCT DRIFT DETECTOR (agnóstico a projeto)
+Audita o PROJETO LINKADO em busca de termos que possam indicar deriva de escopo.
+Targets descobertos dinamicamente; justifcativas podem vir de docs/architecture/drift_allowlist.json.
 """
 
 import os
 import re
 import json
 import sys
+from pathlib import Path
 
 # Garante saída UTF-8 no Windows
 if sys.stdout.encoding != 'utf-8':
@@ -17,16 +18,19 @@ if sys.stdout.encoding != 'utf-8':
     except Exception:
         pass
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-
-# Diretórios específicos de código de produção
-TARGET_DIRECTORIES = [
-    os.path.join(REPO_ROOT, "antecipia-api", "src"),
-    os.path.join(REPO_ROOT, "antecipia-api", "server"),
-    os.path.join(REPO_ROOT, "antecipia-ui", "src"),
-    os.path.join(REPO_ROOT, "services"),
-    os.path.join(REPO_ROOT, "shared", "contracts")
-]
+sys.path.insert(0, str(Path(__file__).parent))
+try:
+    from project_context import get_project_root, get_project_slug, discover_code_dirs
+    REPO_ROOT = str(get_project_root())
+    PROJECT_SLUG = get_project_slug(Path(REPO_ROOT))
+    _found = discover_code_dirs(Path(REPO_ROOT))
+    TARGET_DIRECTORIES = [str(p) for k in ("app", "components", "lib", "src", "shared", "hooks", "scripts") for p in _found.get(k, [])]
+    if not TARGET_DIRECTORIES:
+        TARGET_DIRECTORIES = [REPO_ROOT]
+except Exception:
+    REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    PROJECT_SLUG = "proj"
+    TARGET_DIRECTORIES = [REPO_ROOT]
 
 # Termos que disparam auditoria de deriva
 SUSPICIOUS_KEYWORDS = [
@@ -94,7 +98,7 @@ def scan_codebase():
 
 def main():
     print("=" * 70)
-    print("  ANTECIPIA PRODUCT DRIFT DETECTOR (AUDITORIA ANTI-DERIVA)")
+    print(f"  PRODUCT DRIFT DETECTOR [{PROJECT_SLUG}] (AUDITORIA ANTI-DERIVA)")
     print("=" * 70)
     
     findings = scan_codebase()
@@ -110,7 +114,7 @@ def main():
     # Salva relatório estruturado
     report_path = os.path.join(REPO_ROOT, "docs", "DRIFT_AUDIT_REPORT.md")
     with open(report_path, "w", encoding="utf-8") as rf:
-        rf.write("# ANTECIPIA — DRIFT AUDIT REPORT (AUDITORIA DE DERIVA DE PRODUTO)\n")
+        rf.write(f"# DRIFT AUDIT REPORT — {PROJECT_SLUG}\n")
         rf.write("> **Autoridade:** @Orchestrator\n")
         rf.write("> **Data:** 27/08/2026\n")
         rf.write(f"> **Resumo:** {len(findings)} ocorrencias inspecionadas ({authorized_count} autorizadas por Spec / {review_count} sob analise).\n\n")

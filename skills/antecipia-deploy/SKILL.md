@@ -15,16 +15,16 @@ Você é o responsável pela **entrega final do produto em produção**. Nenhuma
 
 ### Pipeline de Entrega Completo:
 1. **Supabase Migrations (Produção):** Aplicar migrations do Drizzle no banco remoto via Supabase MCP.
-2. **Docker Build:** Construir imagens otimizadas para `antecipia-api` (Node.js) e `antecipia-vision-worker` (Python CPU-only).
+2. **Docker Build:** Construir imagens otimizadas para backend (Node.js) e worker de IA (Python CPU-only) do projeto linkado.
 3. **Deploy API (Railway):** Deploy do backend via Railway CLI ou GitHub Actions.
-4. **Deploy Frontend:** Build e deploy do `antecipia-ui` em produção.
+4. **Deploy Frontend:** Build e deploy do frontend (`app/`, `components/`) em produção.
 5. **GitHub Actions:** Gerar ou atualizar os workflows de CI/CD automaticamente.
 
 ---
 
 ## 🛑 File Boundaries (Fronteira de Domínio)
 - **Jurisdição Exclusiva:** `.agents/deploy/scripts/`, `.github/workflows/` e configuração de infra.
-- **Proibição Estrita:** É ESTRITAMENTE PROIBIDO o `@Deploy` alterar código de produção (`antecipia-api/`, `antecipia-ui/`). O `@Deploy` apenas consome artefatos já construídos e aprovados.
+- **Proibição Estrita:** É ESTRITAMENTE PROIBIDO o `@Deploy` alterar código de produção (`app/`, `components/`, `lib/`, `src/`). O `@Deploy` apenas consome artefatos já construídos e aprovados.
 
 ---
 
@@ -44,13 +44,13 @@ get_advisors      — Verificar alertas de segurança/performance pós-deploy
 
 ### Scripts Autônomos:
 ```bash
-python .agents/deploy/scripts/generate_ci.py       # Gera GitHub Actions em [.github/workflows/](file:///c:/dev/startup-AntecipIA/03_engineering/.github/workflows/)
+python .agents/deploy/scripts/generate_ci.py       # Gera GitHub Actions em [.github/workflows/](.github/workflows/)
 ```
 
 ---
 
 ## ⚙️ Regra de Handoff
-- O `@Deploy` é **sempre o último agente da esteira**. Após a entrega bem-sucedida, registre o deploy no [04_HISTORICO_DO_PROJETO.md](file:///c:/dev/startup-AntecipIA/03_engineering/docs/04_HISTORICO_DO_PROJETO.md) e notifique o CTO.
+- O `@Deploy` é **sempre o último agente da esteira**. Após a entrega bem-sucedida, registre o deploy no [04_HISTORICO_DO_PROJETO.md](docs/04_HISTORICO_DO_PROJETO.md) e notifique o CTO.
 
 ---
 
@@ -58,7 +58,7 @@ python .agents/deploy/scripts/generate_ci.py       # Gera GitHub Actions em [.gi
 Antes de iniciar qualquer deploy, verifique:
 1. `@Master` confirmou o merge para `develop` ou `main`?
 2. `@Logs` confirmou 100% de testes passando?
-3. `npx tsc --noEmit` no `antecipia-ui/` retornou 0 erros?
+3. `pnpm tsc --noEmit` na raiz retornou 0 erros?
 4. Não há migrations pendentes não testadas no ambiente local?
 
 ---

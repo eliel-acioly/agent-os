@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-query_engine.py — AntecipIA Agent Platform v2.0 — RAG Layer
-Motor de busca semântica sobre o codebase indexado no ChromaDB.
-Uso: python .agents/rag/query_engine.py --query "como funciona o RiskBuilder" --agent API
+query_engine.py — Agent-OS RAG Layer (agnóstico a projeto)
+Motor de busca sobre o codebase do PROJETO LINKADO indexado no ChromaDB.
+Uso: python .agents/rag/query_engine.py --query "como funciona o checkout" --agent API
      python .agents/rag/query_engine.py --query "YOLO detection pipeline" --top 5
 """
 
@@ -15,37 +15,71 @@ if hasattr(sys.stdout, 'reconfigure'):
 
 import argparse
 
-ROOT = Path(__file__).parent.parent.parent
-AGENTS_DIR = Path(__file__).parent.parent
-INDEX_DIR = AGENTS_DIR / "rag" / "knowledge" / "project_index"
+sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
+from project_context import (
+    get_project_root, get_agents_dir, get_project_slug,
+    get_index_dir, legacy_index_dir, collection_name, legacy_collection_name,
+)
+
+PROJECT_ROOT = get_project_root()
+AGENTS_DIR = get_agents_dir()
+PROJECT_SLUG = get_project_slug(PROJECT_ROOT)
+INDEX_DIR = get_index_dir(PROJECT_ROOT, AGENTS_DIR)
+LEGACY_INDEX_DIR = legacy_index_dir(AGENTS_DIR)
 SESSION_LOG = AGENTS_DIR / "memory" / "session_log.jsonl"
+PROJECT_SESSION_LOG = AGENTS_DIR / "memory" / "projects" / PROJECT_SLUG / "session_log.jsonl"
 
 SEPARATOR = "═" * 65
 
-# Mapeamento de agente → coleção mais relevante
+
+def _collections_for(agent: str, target_hint: str = "all") -> list:
+    """Coleções por projeto com fallback legado antecipia_* para migração."""
+    primary = collection_name(target_hint, PROJECT_ROOT)
+    legacy = legacy_collection_name(target_hint)
+    # Ordem: projeto primeiro, legado como fallback
+    return [primary] if primary == legacy else [primary, legacy]
+
+
+# Mapeamento de agente → alvos (targets do indexer), resolvidos por projeto
+AGENT_TARGETS = {
+    "API":         ["app", "lib", "all"],
+    "UI":          ["components", "app", "all"],
+    "DB":          ["lib", "app", "all"],
+    "Contracts":   ["lib", "all"],
+    "AI_Edge":     ["lib", "all"],
+    "Gateway":     ["lib", "all"],
+    "Logs":        ["all"],
+    "Master":      ["all"],
+    "Orchestrator":["all"],
+    "Deploy":      ["all"],
+}
+
+# Alias de compat: callers antigos esperam AGENT_COLLECTIONS com nomes prontos.
+# Construído dinamicamente por projeto (com fallback legado na busca).
 AGENT_COLLECTIONS = {
-    "API":         ["antecipia_antecipia-api", "antecipia_all"],
-    "UI":          ["antecipia_antecipia-ui", "antecipia_all"],
-    "DB":          ["antecipia_antecipia-api", "antecipia_all"],
-    "Contracts":   ["antecipia_shared", "antecipia_all"],
-    "AI_Edge":     ["antecipia_services", "antecipia_all"],
-    "Gateway":     ["antecipia_services", "antecipia_all"],
-    "Logs":        ["antecipia_all"],
-    "Master":      ["antecipia_all"],
-    "Orchestrator":["antecipia_all"],
-    "Deploy":      ["antecipia_all"],
+    agent: [c for t in targets for c in _collections_for(agent, t)]
+    for agent, targets in AGENT_TARGETS.items()
 }
 
 
-def get_chroma_client():
+def get_chroma_client_for(index_path: Path):
     try:
         import chromadb
-        if not INDEX_DIR.exists():
+        if not index_path.exists():
             return None
-        client = chromadb.PersistentClient(path=str(INDEX_DIR))
-        return client
+        return chromadb.PersistentClient(path=str(index_path))
     except ImportError:
         return None
+
+
+def get_chroma_client():
+    # Projeto primeiro, legado como fallback
+    client = get_chroma_client_for(INDEX_DIR)
+    if client is not None:
+        return client
+    if LEGACY_INDEX_DIR != INDEX_DIR:
+        return get_chroma_client_for(LEGACY_INDEX_DIR)
+    return None
 
 
 def search_chromadb(query: str, collection_names: list, top_k: int = 5) -> list:
@@ -96,28 +130,123 @@ def search_chromadb(query: str, collection_names: list, top_k: int = 5) -> list:
     return results[:top_k]
 
 
+def _search_sqlite_file(db_file: Path, query: str, top_k: int) -> list:
+    """Busca keyword ranqueada em um chroma.sqlite3 específico."""
+    if not db_file.exists():
+        return []
+    import sqlite3
+    try:
+        conn = sqlite3.connect(str(db_file))
+        cur = conn.cursor()
+
+        terms = [t.lower() for t in query.split() if len(t) > 1]
+        if not terms:
+            return []
+
+        sql = '''
+        SELECT 
+            e.id,
+            MAX(CASE WHEN m.key = 'source' THEN m.string_value END) as source,
+            MAX(CASE WHEN m.key = 'start_line' THEN m.int_value END) as start_line,
+            MAX(CASE WHEN m.key = 'end_line' THEN m.int_value END) as end_line,
+            MAX(CASE WHEN m.key = 'file_type' THEN m.string_value END) as file_type,
+            MAX(CASE WHEN m.key = 'chroma:document' THEN m.string_value END) as document
+        FROM embeddings e
+        JOIN embedding_metadata m ON e.id = m.id
+        GROUP BY e.id
+        '''
+
+        cur.execute(sql)
+        rows = cur.fetchall()
+
+        results = []
+        for row in rows:
+            eid, source, start_l, end_l, file_type, doc = row
+            if not doc:
+                continue
+
+            doc_lower = doc.lower()
+            source_lower = (source or '').lower()
+            combined = doc_lower + ' ' + source_lower
+
+            score = 0
+            if query.lower() in combined:
+                score += 5.0
+            for term in terms:
+                if term in source_lower:
+                    score += 2.5
+                matches = doc_lower.count(term)
+                score += min(matches, 5) * 0.8
+
+            if score > 0:
+                relevance = round(min(0.98, 0.45 + (score * 0.08)), 2)
+                results.append({
+                    "text": doc,
+                    "source": source or "unknown",
+                    "start_line": start_l or 0,
+                    "end_line": end_l or 0,
+                    "file_type": file_type or "",
+                    "relevance": relevance,
+                    "_score": score
+                })
+
+        results.sort(key=lambda x: x["_score"], reverse=True)
+        for r in results:
+            del r["_score"]
+
+        return results[:top_k]
+    except Exception:
+        return []
+
+
+def search_sqlite_rag(query: str, top_k: int = 5) -> list:
+    """Busca híbrida no SQLite do RAG: projeto primeiro, legado como fallback."""
+    results = _search_sqlite_file(INDEX_DIR / "chroma.sqlite3", query, top_k)
+    if results:
+        return results
+    if LEGACY_INDEX_DIR != INDEX_DIR:
+        return _search_sqlite_file(LEGACY_INDEX_DIR / "chroma.sqlite3", query, top_k)
+    return []
+
+
 def fallback_keyword_search(query: str, top_k: int = 5) -> list:
     """
-    Fallback de busca por palavras-chave quando o ChromaDB não está indexado.
-    Busca diretamente nos snapshots JSON gerados pelo update_graph.py.
+    Fallback por palavras-chave nos snapshots do PROJETO atual
+    (memory/projects/<slug>/) com fallback para memory/ legado.
     """
-    snapshot_dir = AGENTS_DIR / "memory"
     results = []
     keywords = query.lower().split()
 
-    for snapshot_file in snapshot_dir.glob("snapshot_*.json"):
-        try:
-            data = json.loads(snapshot_file.read_text(encoding="utf-8"))
-            # Busca nos arquivos recentes modificados
-            for change in data.get("recent_changes", []):
-                if any(kw in change.lower() for kw in keywords):
-                    results.append({
-                        "text": f"Arquivo modificado recentemente: {change}",
-                        "source": change,
-                        "relevance": 0.5
-                    })
-        except Exception:
-            continue
+    snapshot_dirs = []
+    proj_mem = AGENTS_DIR / "memory" / "projects" / PROJECT_SLUG
+    if proj_mem.is_dir():
+        snapshot_dirs.append(proj_mem)
+    snapshot_dirs.append(AGENTS_DIR / "memory")
+
+    seen = set()
+    for snapshot_dir in snapshot_dirs:
+        for snapshot_file in snapshot_dir.glob("snapshot_*.json"):
+            # Ignora snapshots fósseis de outro projeto no fallback legado
+            if snapshot_dir == AGENTS_DIR / "memory" and "antecipia-api" in snapshot_file.name:
+                continue
+            if snapshot_dir == AGENTS_DIR / "memory" and "antecipia-ui" in snapshot_file.name:
+                continue
+            try:
+                data = json.loads(snapshot_file.read_text(encoding="utf-8"))
+                for change in data.get("recent_changes", []):
+                    if change in seen:
+                        continue
+                    if any(kw in change.lower() for kw in keywords):
+                        seen.add(change)
+                        results.append({
+                            "text": f"Arquivo modificado recentemente: {change}",
+                            "source": change,
+                            "relevance": 0.5
+                        })
+                        if len(results) >= top_k:
+                            return results
+            except Exception:
+                continue
 
     return results[:top_k]
 
@@ -144,29 +273,59 @@ def format_results(results: list, query: str) -> str:
 
 
 def log_query(agent: str, query: str, results_count: int):
-    if SESSION_LOG.parent.exists():
-        entry = {
-            "timestamp": __import__("datetime").datetime.now().isoformat(),
-            "agent": agent,
-            "event": "rag_query",
-            "query": query,
-            "results_count": results_count
-        }
-        with open(SESSION_LOG, "a", encoding="utf-8") as f:
-            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    entry = {
+        "timestamp": __import__("datetime").datetime.now().isoformat(),
+        "project": PROJECT_SLUG,
+        "project_root": str(PROJECT_ROOT),
+        "agent": agent,
+        "event": "rag_query",
+        "query": query,
+        "results_count": results_count
+    }
+    # Log por projeto (novo) + log global (compat)
+    for log_path in (PROJECT_SESSION_LOG, SESSION_LOG):
+        try:
+            if log_path.parent.exists() or log_path == SESSION_LOG:
+                if log_path == PROJECT_SESSION_LOG:
+                    log_path.parent.mkdir(parents=True, exist_ok=True)
+                with open(log_path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        except Exception:
+            continue
 
 
 def query_rag(query: str, agent: str = "Master", top_k: int = 5) -> list:
     """
-    Interface principal para consulta RAG.
+    Interface principal para consulta RAG (por projeto).
     Retorna lista de resultados ordenados por relevância.
     """
-    collection_names = AGENT_COLLECTIONS.get(agent, ["antecipia_all"])
+    targets = AGENT_TARGETS.get(agent, ["all"])
+    collection_names: list = []
+    for t in targets:
+        for c in _collections_for(agent, t):
+            if c not in collection_names:
+                collection_names.append(c)
 
-    # Tentar ChromaDB primeiro
-    results = search_chromadb(query, collection_names, top_k)
+    # CAMADA 1 (PRIMÁRIA): busca híbrida SQLite — determinística, rápida e sem dependência
+    # de bibliotecas nativas (hnswlib). Resiliente por design (ADR-009).
+    results = search_sqlite_rag(query, top_k)
 
-    # Fallback para busca por keyword se ChromaDB vazio
+    # CAMADA 2 (REFORÇO OPCIONAL): ChromaDB vetorial quando o índice HNSW está saudável.
+    # Enriquece com achados semânticos de outras fontes, sem substituir o primário.
+    if results:
+        seen_sources = {r.get("source") for r in results}
+        try:
+            vector_hits = search_chromadb(query, collection_names, top_k)
+        except Exception:
+            vector_hits = []
+        for hit in vector_hits:
+            src = hit.get("source")
+            if src not in seen_sources:
+                results.append(hit)
+                seen_sources.add(src)
+        results = results[:top_k]
+
+    # CAMADA 3 (FALLBACK): snapshots de arquivos modificados recentemente
     if not results:
         results = fallback_keyword_search(query, top_k)
 
@@ -175,10 +334,10 @@ def query_rag(query: str, agent: str = "Master", top_k: int = 5) -> list:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Busca semântica RAG no codebase AntecipIA.")
+    parser = argparse.ArgumentParser(description="Busca RAG no codebase do projeto linkado.")
     parser.add_argument("--query", "-q", required=True, help="Consulta semântica")
     parser.add_argument("--agent", "-a", default="Master",
-                        choices=list(AGENT_COLLECTIONS.keys()),
+                        choices=list(AGENT_TARGETS.keys()),
                         help="Agente consultante (define coleções prioritárias)")
     parser.add_argument("--top", "-k", type=int, default=5, help="Número de resultados")
     parser.add_argument("--json", "-j", action="store_true", help="Saída em JSON")
@@ -191,7 +350,7 @@ def main():
         return
 
     print(f"\n{SEPARATOR}")
-    print(f"  🔍 AntecipIA RAG Query Engine")
+    print(f"  RAG Query Engine (projeto: {PROJECT_SLUG})")
     print(f"  Agente: @{args.agent}  |  Query: '{args.query}'")
     print(SEPARATOR)
 

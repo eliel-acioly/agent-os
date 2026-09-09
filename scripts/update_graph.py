@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-update_graph.py — AntecipIA Agent Platform v2.0
-Verifica e rebuilda o code-review-graph para o submódulo alvo.
-O grafo DEVE estar sempre atualizado antes de qualquer sessão de agente.
-Uso: python .agents/scripts/update_graph.py [--target antecipia-api|antecipia-ui|all]
+update_graph.py — Agent-OS (agnóstico a projeto)
+Verifica e registra snapshot do PROJETO LINKADO (raiz com `.agents/`).
+O snapshot por projeto vive em `.agents/memory/projects/<slug>/`.
+Uso: python .agents/scripts/update_graph.py [--target app|components|lib|docs|scripts|all]
 """
 
 import sys
@@ -17,18 +17,37 @@ if hasattr(sys.stdout, 'reconfigure'):
 
 import argparse
 
-ROOT = Path(__file__).parent.parent.parent
-MEMORY_DIR = Path(__file__).parent.parent / "memory"
+sys.path.insert(0, str(Path(__file__).parent))
+from project_context import (
+    get_project_root, get_agents_dir, get_project_slug,
+    get_project_memory_dir, discover_code_dirs,
+)
+
+PROJECT_ROOT = get_project_root()
+AGENTS_DIR = get_agents_dir()
+PROJECT_SLUG = get_project_slug(PROJECT_ROOT)
+MEMORY_DIR = get_project_memory_dir(PROJECT_ROOT, AGENTS_DIR)
+LEGACY_MEMORY_DIR = AGENTS_DIR / "memory"
 GRAPH_STATUS_FILE = MEMORY_DIR / "graph_last_updated.json"
-GRAPH_DB = ROOT / ".code-review-graph" / "graph.db"
+GRAPH_DB = PROJECT_ROOT / ".code-review-graph" / "graph.db"
 
 SEPARATOR = "═" * 65
 
-SUBMODULE_DIRS = {
-    "antecipia-api": ROOT / "antecipia-api",
-    "antecipia-ui":  ROOT / "antecipia-ui",
-    "root":          ROOT,
-}
+
+def _build_submodule_dirs() -> dict:
+    found = discover_code_dirs(PROJECT_ROOT)
+    # update_graph espera {target: Path}; discover retorna {target: [Path,...]}
+    out: dict = {}
+    for key, paths in found.items():
+        if key in ("agents", "all"):
+            continue
+        if paths:
+            out[key] = paths[0]
+    out["root"] = PROJECT_ROOT
+    return out
+
+
+SUBMODULE_DIRS = _build_submodule_dirs()
 
 
 def get_git_head(repo_dir: Path) -> str:
@@ -88,7 +107,7 @@ def try_rebuild_graph(target: str, repo_dir: Path) -> bool:
             result = subprocess.run(
                 cmd.split() + ["build", "--path", str(repo_dir)],
                 capture_output=True, text=True, timeout=120,
-                cwd=str(ROOT)
+                cwd=str(PROJECT_ROOT)
             )
             if result.returncode == 0:
                 print(f"[OK] Grafo rebuilt para {target}")
@@ -104,6 +123,7 @@ def generate_code_summary(target: str, repo_dir: Path) -> dict:
     """
     summary = {
         "target": target,
+        "project": PROJECT_SLUG,
         "path": str(repo_dir),
         "file_counts": {},
         "recent_changes": []
@@ -146,7 +166,8 @@ def main():
     targets = list(SUBMODULE_DIRS.keys()) if args.target == "all" else [args.target]
 
     print(f"\n{SEPARATOR}")
-    print("  📊 code-review-graph Auto-Update — AntecipIA Platform v2.0")
+    print(f"  code-review-graph Auto-Update — Agent-OS (projeto: {PROJECT_SLUG})")
+    print(f"  Root: {PROJECT_ROOT}")
     print(f"  Targets: {', '.join(targets)}")
     print(SEPARATOR)
 

@@ -15,18 +15,19 @@ import (
 	"time"
 )
 
-// AgentCollections maps agents to their target collections (for future REST ChromaDB use)
+// AgentCollections maps agents to their target collections (agnóstico: <slug>_<target>, com fallback legado).
+// Nota: a busca real é delegada ao query_engine.py (--agent); este mapa é documental/futuro REST.
 var AgentCollections = map[string][]string{
-	"API":          {"antecipia_antecipia-api", "antecipia_all"},
-	"UI":           {"antecipia_antecipia-ui", "antecipia_all"},
-	"DB":           {"antecipia_antecipia-api", "antecipia_all"},
-	"Contracts":    {"antecipia_shared", "antecipia_all"},
-	"AI_Edge":      {"antecipia_services", "antecipia_all"},
-	"Gateway":      {"antecipia_services", "antecipia_all"},
-	"Logs":         {"antecipia_all"},
-	"Master":       {"antecipia_all"},
-	"Orchestrator": {"antecipia_all"},
-	"Deploy":       {"antecipia_all"},
+	"API":          {"app", "lib", "all"},
+	"UI":           {"components", "app", "all"},
+	"DB":           {"lib", "app", "all"},
+	"Contracts":    {"lib", "all"},
+	"AI_Edge":      {"lib", "all"},
+	"Gateway":      {"lib", "all"},
+	"Logs":         {"all"},
+	"Master":       {"all"},
+	"Orchestrator": {"all"},
+	"Deploy":       {"all"},
 }
 
 type SearchResult struct {
@@ -76,7 +77,7 @@ func main() {
 	if !*jsonOut {
 		separator := strings.Repeat("═", 65)
 		fmt.Printf("\n%s\n", separator)
-		fmt.Printf("  ⚡ AntecipIA GraphRAG Query Engine (Golang Edition)\n")
+		fmt.Printf("  Agent-OS GraphRAG Query Engine (Golang Edition)\n")
 		fmt.Printf("  Agente: @%s  |  Query: '%s'\n", *agent, *query)
 		fmt.Printf("%s\n", separator)
 	}
@@ -92,10 +93,16 @@ func main() {
 }
 
 func executeSearch(query, agent string, top int) []SearchResult {
-	// FASE 3 — Delega a busca semântica ao motor ChromaDB (Python), que agora
-	// indexa antecipia-api/server (motores de inteligência) e usa espaço cosseno.
+	// Delega ao motor Python do projeto linkado (agnóstico: root/.agents/rag/query_engine.py).
 	root := findRepoRoot()
 	script := filepath.Join(root, ".agents", "rag", "query_engine.py")
+	// Standalone agent-os (sem junction): root já é o agent-os
+	if _, err := os.Stat(script); err != nil {
+		alt := filepath.Join(root, "rag", "query_engine.py")
+		if _, err2 := os.Stat(alt); err2 == nil {
+			script = alt
+		}
+	}
 	py := os.Getenv("PYTHON_BIN")
 	if py == "" {
 		py = "python"
@@ -128,8 +135,8 @@ func executeSearch(query, agent string, top int) []SearchResult {
 }
 
 func findRepoRoot() string {
-	// Localiza a raiz do monorepo subindo a partir do diretório do executável
-	// (binário em .agents/rag-go/) ou do CWD, procurando pnpm-workspace.yaml.
+	// Localiza a raiz do PROJETO LINKADO (dir contendo `.agents/`) subindo do
+	// executável ou do CWD. Fallback: procura pnpm-workspace/package.json. Senão ".".
 	starts := []string{}
 	if exe, err := os.Executable(); err == nil {
 		starts = append(starts, filepath.Dir(exe))
@@ -139,9 +146,21 @@ func findRepoRoot() string {
 	}
 	for _, start := range starts {
 		dir := start
-		for i := 0; i < 8; i++ {
+		for i := 0; i < 10; i++ {
+			if st, err := os.Stat(filepath.Join(dir, ".agents")); err == nil && st.IsDir() {
+				return dir
+			}
 			if _, err := os.Stat(filepath.Join(dir, "pnpm-workspace.yaml")); err == nil {
 				return dir
+			}
+			if _, err := os.Stat(filepath.Join(dir, "package.json")); err == nil {
+				// Só aceita package.json se houver app/ ou components/ ou docs/ (evita agent-os/skills)
+				if _, e1 := os.Stat(filepath.Join(dir, "app")); e1 == nil {
+					return dir
+				}
+				if _, e2 := os.Stat(filepath.Join(dir, "components")); e2 == nil {
+					return dir
+				}
 			}
 			parent := filepath.Dir(dir)
 			if parent == dir {
@@ -207,7 +226,21 @@ func fallbackKeywordSearch(query, snapshotDir string, top int) []SearchResult {
 }
 
 func logQuery(agent, query string, count int) {
-	logFile := filepath.Join(findRepoRoot(), ".agents", "memory", "session_log.jsonl")
+	root := findRepoRoot()
+	candidates := []string{
+		filepath.Join(root, ".agents", "memory", "session_log.jsonl"),
+		filepath.Join(root, "memory", "session_log.jsonl"),
+	}
+	var logFile string
+	for _, c := range candidates {
+		if _, err := os.Stat(filepath.Dir(c)); err == nil {
+			logFile = c
+			break
+		}
+	}
+	if logFile == "" {
+		return
+	}
 	f, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return

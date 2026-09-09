@@ -20,7 +20,7 @@ metadata:
 - **Barreiras Invioláveis (Strict Barriers):** 
   - Sempre validar com schema real.
   - Nunca alterar schema de DB silenciosamente.
-- **Links para arquivos reais:** Sempre referencie `file:///c:/dev/startup-AntecipIA/03_engineering/shared/contracts/` ao lidar com schemas unificados.
+- **Links para arquivos reais:** Sempre referencie `shared/contracts/` ao lidar com schemas unificados.
 
 Comprehensive performance optimization guide for Postgres, maintained by Supabase. Contains rules across 8 categories, prioritized by impact to guide automated query optimization and schema design.
 

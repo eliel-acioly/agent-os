@@ -1,18 +1,31 @@
 #!/usr/bin/env python3
 """
-memory_write.py — AntecipIA Agent Platform v2.0
+memory_write.py — Agent-OS (agnóstico a projeto)
 Persiste um aprendizado ou padrão novo na base de conhecimento do agente.
 Uso: python .agents/scripts/memory_write.py --agent API --type learning --text "Sempre validar DTOs com Zod"
 """
 
 import sys
 import json
+import os
+import time
 import argparse
 from pathlib import Path
 from datetime import datetime
 
+# Instrumentação de observabilidade (spans com duração/modelo/tokens)
+import metrics_hook as _mh
+
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
+
+sys.path.insert(0, str(Path(__file__).parent))
+try:
+    from project_context import get_project_root, get_agents_dir, get_project_slug
+    PROJECT_ROOT = get_project_root()
+    PROJECT_SLUG = get_project_slug(PROJECT_ROOT)
+except Exception:
+    PROJECT_SLUG = "proj"
 
 AGENTS_DIR = Path(__file__).parent.parent
 MEMORY_DIR = AGENTS_DIR / "memory"
@@ -35,6 +48,7 @@ def main():
     parser.add_argument("--text", "-x", required=True, help="Texto do aprendizado ou padrão")
     args = parser.parse_args()
 
+    _start_ts = time.time()
     agent_name = args.agent.strip().replace("@", "")
     entry_type = args.type
     text = args.text.strip()
@@ -58,16 +72,15 @@ def main():
     kb["last_updated"] = datetime.now().strftime("%Y-%m-%d")
     save_json(KNOWLEDGE_BASE, kb)
 
-    # Log de sessão
-    log_entry = {
-        "timestamp": datetime.now().isoformat(),
-        "agent": agent_name,
-        "event": "memory_written",
-        "type": entry_type,
-        "text": text
-    }
-    with open(SESSION_LOG, "a", encoding="utf-8") as f:
-        f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
+    # Span de observabilidade (padrão tracing) — duração, modelo, tokens estimados, decisão
+    _mh.record_span(
+        agent_name,
+        event="memory_written",
+        duration_ms=(time.time() - _start_ts) * 1000,
+        tokens=len(text) // 4,
+        decision=entry_type,
+        extra={"type": entry_type, "text": text[:200]},
+    )
 
     print(f"[OK] Memória persistida para @{agent_name}:")
     print(f"     Tipo: {entry_type}")

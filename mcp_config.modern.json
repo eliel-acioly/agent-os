@@ -1,0 +1,61 @@
+{
+  "note": "Catálogo MCP estendido (padrão moderno 2026). Arquivo OPT-IN, agnóstico a projeto.",
+  "how_to_enable": "Mescle as entradas desejadas no .agents/mcp_config.json. Entradas stdio exigem os pacotes npm presentes (instale com pnpm/npm na raiz do PROJETO LINKADO ou configure o caminho global). Use ${WORKSPACE} para a raiz do projeto linkado.",
+  "mcpServers": {
+    "github-official": {
+      "description": "Ferramentas do GitHub (issues, PRs, código) — grounding de repositório no padrão MCP.",
+      "serverUrl": "https://api.githubcopilot.com/mcp/",
+      "auth": "Enviar token pessoal/fino (GITHUB_TOKEN) com escopo mínimo conforme doc oficial.",
+      "enabled": false
+    },
+    "supabase": {
+      "description": "Consulta e SQL no Supabase/Postgres com acesso controlado (schema/RLS).",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "${SUPABASE_ACCESS_TOKEN}",
+        "--project-ref",
+        "${SUPABASE_PROJECT_REF}"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "seu-pat-aqui",
+        "SUPABASE_PROJECT_REF": "glibdygzmmddzlxhtrie"
+      },
+      "enabled": false
+    },
+    "postgres-connect": {
+      "description": "Postgres MCP (conector de DB compatível com o Supabase). Requer DATABASE_URL de leitura com permissão mínima.",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://usuario:sua-senha@HOST:5432/postgres"
+      ],
+      "enabled": false
+    },
+    "filesystem": {
+      "description": "Acesso estruturado ao filesystem do projeto linkado (patch, edit, list), ACI segura.",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "${WORKSPACE}"
+      ],
+      "enabled": false
+    },
+    "context7": {
+      "description": "Documentação atualizada de bibliotecas (docs como contexto) — reduz alucinação de API.",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "enabled": false
+    }
+  },
+  "security_rules": [
+    "NUNCA exponha SUPABASE_SERVICE_ROLE_KEY nem tokens de produção em args/env de MCP.",
+    "Use tokens de escopo mínimo e variáveis ${ENV} em vez de valores fixos.",
+    "Mantenha a regra Reality-First: MCP não injeta mocks; consulta dados reais dos ambientes DEMO/HML.",
+    "Habilite gradualmente: primeiro POSTGRES (leitura), depois GITHUB (repo), depois SUPABASE (escrita)."
+  ]
+}

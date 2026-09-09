@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-project_snapshot.py — AntecipIA Agent Platform v2.0 — RAG Layer
-Gera um briefing semântico do estado atual do projeto combinando:
-  - code-review-graph (estrutura arquitetural)
-  - ChromaDB RAG (contexto semântico relevante)
+project_snapshot.py — Agent-OS (agnóstico a projeto)
+Gera um briefing do estado atual do PROJETO LINKADO combinando:
+  - snapshots por projeto (memory/projects/<slug>/)
+  - ChromaDB RAG por projeto
   - knowledge_base.json (lições e padrões)
 
 Uso: python .agents/rag/project_snapshot.py --agent API --query "alertas Socket.IO"
@@ -20,11 +20,23 @@ if hasattr(sys.stdout, 'reconfigure'):
 
 import argparse
 
-AGENTS_DIR = Path(__file__).parent.parent
-ROOT = AGENTS_DIR.parent
-MEMORY_DIR = AGENTS_DIR / "memory"
-KNOWLEDGE_BASE = MEMORY_DIR / "knowledge_base.json"
+sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
+try:
+    from project_context import get_project_root, get_agents_dir, get_project_slug, get_project_memory_dir
+    PROJECT_ROOT = get_project_root()
+    AGENTS_DIR = get_agents_dir()
+    PROJECT_SLUG = get_project_slug(PROJECT_ROOT)
+    MEMORY_DIR = get_project_memory_dir(PROJECT_ROOT, AGENTS_DIR)
+    LEGACY_MEMORY_DIR = AGENTS_DIR / "memory"
+except Exception:
+    AGENTS_DIR = Path(__file__).parent.parent
+    PROJECT_ROOT = AGENTS_DIR.parent
+    PROJECT_SLUG = "proj"
+    MEMORY_DIR = AGENTS_DIR / "memory"
+    LEGACY_MEMORY_DIR = MEMORY_DIR
+KNOWLEDGE_BASE = (AGENTS_DIR / "memory" / "knowledge_base.json")
 GRAPH_STATUS_FILE = MEMORY_DIR / "graph_last_updated.json"
+LEGACY_GRAPH_STATUS_FILE = LEGACY_MEMORY_DIR / "graph_last_updated.json"
 
 SEPARATOR = "═" * 65
 
@@ -46,18 +58,38 @@ DEFAULT_QUERIES = {
 
 
 def load_graph_status() -> dict:
-    if GRAPH_STATUS_FILE.exists():
-        return json.loads(GRAPH_STATUS_FILE.read_text(encoding="utf-8"))
+    for p in (GRAPH_STATUS_FILE, LEGACY_GRAPH_STATUS_FILE):
+        try:
+            if p.exists():
+                data = json.loads(p.read_text(encoding="utf-8"))
+                if data:
+                    return data
+        except Exception:
+            continue
     return {}
 
 
 def load_project_snapshots() -> list:
-    """Carrega snapshots estáticos gerados pelo update_graph.py."""
+    """Carrega snapshots do projeto atual com fallback legado (exceto fósseis de outro projeto)."""
     summaries = []
-    for snapshot in MEMORY_DIR.glob("snapshot_*.json"):
+    seen_targets = set()
+    for base in (MEMORY_DIR, LEGACY_MEMORY_DIR):
         try:
-            data = json.loads(snapshot.read_text(encoding="utf-8"))
-            summaries.append(data)
+            if not base.is_dir():
+                continue
+            for snapshot in base.glob("snapshot_*.json"):
+                # No fallback legado, ignora fósseis de outro projeto
+                if base == LEGACY_MEMORY_DIR and ("snapshot_antecipia-api" in snapshot.name or "snapshot_antecipia-ui" in snapshot.name):
+                    continue
+                try:
+                    data = json.loads(snapshot.read_text(encoding="utf-8"))
+                except Exception:
+                    continue
+                target = data.get("target", snapshot.stem)
+                if target in seen_targets:
+                    continue
+                seen_targets.add(target)
+                summaries.append(data)
         except Exception:
             continue
     return summaries
@@ -76,7 +108,8 @@ def get_rag_context(query: str, agent: str, top_k: int = 4) -> list:
 
 def print_snapshot(agent: str, query: str, show_rag: bool = True):
     print(f"\n{SEPARATOR}")
-    print(f"  🗺️  Project Snapshot — @{agent}")
+    print(f"  Project Snapshot [{PROJECT_SLUG}] — @{agent}")
+    print(f"  Root: {PROJECT_ROOT}")
     print(f"  Query: '{query}'")
     print(SEPARATOR)
 
