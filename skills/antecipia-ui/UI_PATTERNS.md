@@ -1,4 +1,4 @@
-# 🛠️ UI PATTERNS & IMPLEMENTATION (ANTECIPIA)
+# 🛠️ UI PATTERNS & IMPLEMENTATION (AGENT-OS)
 
 Este documento é a FONTE DA VERDADE **TÉCNICA** para o `@UI`. 
 > Para regras de Estética, Qualidade Visual, Anti-Generic Design e os 10 Níveis de Excelência, consulte obrigatoriamente o **[DESIGN_DIRECTION.md](.agents/skills/antecipia-ui/DESIGN_DIRECTION.md)**.
@@ -47,18 +47,18 @@ A aplicação do Glassmorphism e da Profundidade (Nível 8 do `DESIGN_DIRECTION.
 ## 5. GESTÃO DE ESTADOS E ACESSIBILIDADE
 
 - Todo componente assíncrono deve tratar os 5 estados canônicos: `Loading` (skeletons), `Empty`, `Error`, `Offline/Syncing` e `Success`.
-- Acessibilidade: `aria-live="polite"` ou `"assertive"` para atualizações dinâmicas (alertas COPOM), foco visível e contraste WCAG 2.1 AAA.
+- Acessibilidade: `aria-live="polite"` ou `"assertive"` para atualizações dinâmicas, foco visível e contraste WCAG 2.1 AA/AAA.
 - Feedback de ações críticas: Sonner (toasts).
 
 ---
 
 ## 6. COMPONENT-DRIVEN DEVELOPMENT (OBRIGATÓRIO)
 
-1. Todo elemento visual novo ou refatorado deve ser criado primeiro como componente isolado no Storybook.
-2. Stories obrigatórias: Default, Hover, Loading, Error, Mobile, Desktop.
+1. Todo elemento visual novo ou refatorado deve ser criado primeiro como componente isolado no Storybook ou biblioteca de componentes.
+2. Stories obrigatórias quando aplicável: Default, Hover, Loading, Error, Mobile, Desktop.
 3. Variantes de status (ativo, pendente, crítico, liberado etc.) devem ser expressas via CVA (Class Variance Authority).
 4. Páginas são apenas composição de componentes já documentados. Proibido gerar layout monolítico.
-5. Bibliotecas de suporte obrigatórias quando aplicável:
+5. Bibliotecas de suporte recomendadas quando aplicável:
    - shadcn/ui + Base UI / Radix (base de componentes)
    - Tailwind v4 (estilização)
    - Motion (animações)
@@ -70,7 +70,7 @@ A aplicação do Glassmorphism e da Profundidade (Nível 8 do `DESIGN_DIRECTION.
 
 ## 7. REGRAS TÉCNICAS INVIOLÁVEIS (STRICT BARRIERS)
 
-- **Zero Emojis:** É ESTRITAMENTE PROIBIDO o uso de emojis nativos na UI. Use exclusivamente `<IconName />` da biblioteca `lucide-react`.
+- **Zero Emojis:** É ESTRITAMENTE PROIBIDO o uso de emojis nativos na UI. Use exclusivamente `<IconName />` da biblioteca vetorial do projeto (ex: `lucide-react`).
 - **Edição de Arquivos:** PROIBIDO o uso de Regex (`replace`, `node -e`) para alterar arquivos TSX/JSX. Use sempre edição estruturada.
-- **Gestão de Memória WebGL:** Se o painel tático utilizar PixiJS ou Three.js, implementar limpeza imperativa (`app.destroy(true, true)`) no retorno do `useEffect`.
+- **Gestão de Memória WebGL:** Se o projeto utilizar PixiJS, Three.js ou Canvas WebGL, implementar limpeza imperativa no desmonte dos componentes.
 - **Navegação Mobile:** Drawer como padrão. Bottom Nav apenas sob condição de arquitetura de informação plana.

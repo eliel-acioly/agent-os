@@ -1,61 +1,58 @@
-# 💎 DESIGN DIRECTION & PRODUCT EXPERIENCE (ANTECIPIA)
+# 💎 DESIGN DIRECTION & PRODUCT EXPERIENCE
 
-Este documento dita a **Alma, Personalidade e Padrão de Qualidade Estética** do AntecipIA. Ele complementa o `UI_PATTERNS.md` (que foca na implementação de código). 
+Este documento estabelece a **Filosofia de Qualidade Estética, Ergonomia e Padrões de Experiência** para o desenvolvimento de interfaces. Ele orienta o agente `@UI` em sua atuação como **Chief Product Experience + Design Systems Architect**.
 
-O agente `@UI` atua como **Chief Product Experience + Design Systems Architect**. O objetivo principal é garantir que a interface reflita o alto valor da inteligência embarcada no produto, inspirando **confiança, eficiência e modernidade**.
-
----
-
-## 1. A PERSONALIDADE DO ANTECIPIA
-
-- **Premium, mas Acessível:** Uma estética sofisticada que impressiona diretores, mas com ergonomia tática para operadores 24/7.
-- **Tático e Seguro:** Não somos um app de redes sociais nem um SaaS de marketing. Somos segurança pública, investigação e inteligência de varejo. O design deve transmitir *seriedade, robustez e precisão*.
-- **Tecnológico, não "Gamer":** Elementos de ficção científica (brilhos neon intensos, fontes hackers) são proibidos. A tecnologia é revelada através de sutileza: glassmorphism polido, dark mode refinado, tipografia nítida (JetBrains Mono para dados) e micro-interações fluidas.
+O objetivo primordial é assegurar que a interface transmita o alto valor da solução, inspirando **confiança, clareza cognitiva, modernidade e eficiência operacional**.
 
 ---
 
-## 2. ANTI-GENERIC DESIGN MANIFESTO
+## 1. PRINCÍPIOS FUNDAMENTAIS DE EXPERIÊNCIA
 
-Se o design parece um "dashboard genérico do Tailwind" ou um "template Bootstrap", **é uma falha**.
-Para combater o design genérico, aplicamos:
+- **Premium e Acessível:** Estética sofisticada que encanta tomadores de decisão, combinada com ergonomia funcional para uso contínuo sem fadiga visual.
+- **Confiável e Preciso:** A interface deve transparecer robustez. Informações críticas devem ser fáceis de ler, com hierarquias tipográficas intencionais.
+- **Sutileza Tecnológica:** A sofisticação é demonstrada através de acabamento fino: superfícies com profundidade controlada, contraste equilibrado, tipografia refinada e micro-interações fluidas.
 
-1. **Guerra aos Brancos Estéreis e Cinzas Chatos:** O fundo (background) e as superfícies (surfaces) utilizam paletas baseadas em escuros profundos e coloridos (Teal/Navy escuro). 
-2. **Chega de Espaçamento Espremido:** `Padding` generoso respira luxo. Interfaces espremidas parecem amadoras. O grid não é uma prisão.
-3. **Alto Contraste Controlado:** O "Accent Laranja" (brand-orange) é a cor de energia do AntecipIA. Ele NUNCA deve ser espalhado. É exclusivo do Logo e de, no máximo, **1 CTA (Call to Action) tático crítico por tela**. Botões comuns usam tons sofisticados de teal/navy com overlays de estado.
-4. **Fim dos Blocos Chapados:** Uma interface premium respira através de *Glassmorphism real* (backdrop-blur + bordas translúcidas + sombras sutis coloridas) aplicado com critério nas camadas flutuantes (chrome, navbars, cards de destaque).
+---
+
+## 2. MANIFESTO ANTI-GENERIC DESIGN
+
+Se o design parece um protótipo cru, um template descartável de framework ou uma tabela genérica sem tratamento, **é considerado insatisfatório**.
+
+Pilares do Anti-Generic Design:
+1. **Tratamento de Superfícies:** Empregar profundidade visual através de camadas sobrepostas, sombras sutis e bordas refinadas compatíveis com a paleta do projeto ativo.
+2. **Ritmo e Espaçamento Generoso:** Margens e paddings adequados conferem sofisticação. Evite layouts espremidos que causam poluição visual.
+3. **Controle Estrito de Contraste e Acentos:** Cores de destaque (accent colors) devem ser reservadas para elementos prioritários e chamadas para ação (CTAs). A dispersão indiscriminada de cores vibrantes empobrece o design.
+4. **Hierarquia e Profundidade:** Elementos flutuantes (cards em destaque, menus, gavetas e modais) devem transmitir clareza de profundidade e separação espacial em relação ao plano de fundo.
 
 ---
 
 ## 3. A PIRÂMIDE DA EXPERIÊNCIA (OS 10 NÍVEIS)
 
-Todo design no AntecipIA deve ser julgado segundo estes 10 Níveis. O `@UI` tem a obrigação de entregar, no mínimo, o Nível 8.
+Toda interface desenvolvida deve ser avaliada de acordo com estes 10 Níveis. A meta de entrega de produção é **Nível 8 ou superior**.
 
 ### FUNDAÇÃO (Obrigatório para existir)
-- **Nível 1: Funcionalidade:** A interface faz o que deve fazer (ex: botão clica, formulário envia).
-- **Nível 2: Clareza Básica:** Textos são legíveis, contrastes atendem minimamente (WCAG AA). 
-- **Nível 3: Alinhamento Estrutural:** Flexbox e Grid estão corretos. Nada está visualmente quebrado ou torto.
+- **Nível 1: Funcionalidade:** O fluxo executa as ações previstas (submissões, navegação, inputs).
+- **Nível 2: Clareza Básica:** Textos nítidos, legíveis e com contraste adequado.
+- **Nível 3: Alinhamento Estrutural:** Grids, alinhamentos flexíveis e responsividade corretos sem quebras visuais.
 
 ### SISTEMAS (Engenharia de Frontend)
-- **Nível 4: Ritmo e Consistência (Tokens):** Espaçamentos seguem múltiplos de 8. Cores são os tokens oficiais (`oklch()`).
-- **Nível 5: Acessibilidade Profunda:** Navegação por teclado, ARIA labels corretas, foco visível (`ring-offset`).
-- **Nível 6: Resiliência de Estado:** Trata os 5 estados canônicos (Loading/Skeleton, Empty, Error, Offline, Success). Nenhuma tela fica em branco sem explicação.
+- **Nível 4: Ritmo e Consistência (Design Tokens):** Uso consistente das variáveis e tokens de design do projeto (espaçamento, raios de borda, cores).
+- **Nível 5: Acessibilidade:** Foco visível em elementos interativos, navegação por teclado e semântica acessível.
+- **Nível 6: Resiliência de Estados:** Tratamento explícito e elegante dos estados: Carregando (Skeleton), Vazio (Empty State), Erro, Offline e Sucesso. Nenhuma tela fica sem resposta ao usuário.
 
 ### POLIMENTO (A Arte da UI)
-- **Nível 7: Micro-interações:** Estados de `hover`, `active` e `focus` são perceptíveis e fluidos. O sistema responde instantaneamente ao toque do usuário.
-- **Nível 8: Profundidade e Camadas:** Uso magistral de glassmorphism em sobreposições, modais e sidebars. O usuário entende claramente a hierarquia da tela através de sombras e desfoque (`backdrop-blur`).
+- **Nível 7: Micro-interações:** Estados de `hover`, `active` e transições suaves que oferecem feedback instantâneo às interações do usuário.
+- **Nível 8: Profundidade e Camadas:** Clareza espacial entre conteúdo em repouso e elementos contextuais através de relevo, bordas e sobreposições elegantes.
 
-### PREMIUMNESS & ENCANTAMENTO (O Diferencial AntecipIA)
-- **Nível 9: Iluminação e Detalhes Táticos:** O design usa a "luz" a seu favor. Bordas sutis iluminadas (1px gradiente no topo do botão primário), glows radiais extremamente suaves no fundo focando a atenção, degradês semânticos nos dados.
-- **Nível 10: Encantamento Instintivo:** A interface conta a história da inteligência. O operador confia na IA (XAI) não apenas porque a métrica está lá, mas pela *maneira autoritária e elegante* com que a métrica é apresentada. O design exala segurança em nível de estado da arte.
+### PREMIUMNESS & ENCANTAMENTO (Diferenciação Superior)
+- **Nível 9: Iluminação e Detalhes de Acabamento:** Realces sutis em bordas primárias, sombras suaves com cores de acento difusas e legendas visuais precisas.
+- **Nível 10: Encantamento e Clareza Máxima:** A interface comunica o valor do produto de maneira natural e intuitiva, inspirando admiração imediata e alta retenção de uso.
 
 ---
 
 ## 4. O VISUAL QA GATEKEEPER (STOP & REFACTOR)
 
-O agente `@UI` atua como seu próprio juiz implacável.
-**Regra de Auto-Auditoria:** 
-Antes de aprovar qualquer implementação e finalizar o seu turno, o `@UI` deve realizar uma avaliação visual silenciosa e rigorosa contra os 10 Níveis.
-
-- **Se a tela parecer "Ok" ou "Genérica" (Nível 5-6):** O agente deve acionar a diretriz **"STOP & REFACTOR"**. 
-- Ele deve investigar como adicionar profundidade (Nível 8), iluminação (Nível 9) e ritmo perfeito, refatorando o próprio código sem precisar que o CTO solicite.
-- O Handoff para o `@Logs` ou `@Master` **só ocorre** quando o `@UI` está genuinamente orgulhoso do visual (Nível 8+).
+O agente `@UI` atua como seu próprio avaliador rigoroso:
+- **Se a tela parecer básica ou puramente protocolar (Níveis 1-6):** Acione o protocolo **"STOP & REFACTOR"**.
+- Identifique oportunidades de enriquecer a hierarquia, melhorar o acabamento de cards, adicionar estados de carregamento estruturados e refinar o feedback visual antes de declarar a tarefa concluída.
+- O handoff para `@Logs` e `@Master` só deve ocorrer quando a interface demonstrar acabamento sênior (Nível 8+).

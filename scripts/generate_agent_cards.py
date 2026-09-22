@@ -34,8 +34,8 @@ except Exception:
 
 ROOT = PROJECT_ROOT
 SKILLS_ROOT = AGENTS_DIR / "skills"
-BASE_URL = "https://ligacommerce.com.br/agents"
-PROVIDER = {"organization": "Agent-OS", "url": "https://ligacommerce.com.br"}
+BASE_URL = "https://agent-os.dev/agents"
+PROVIDER = {"organization": "Agent-OS", "url": "https://agent-os.dev"}
 SEP = "=" * 70
 
 
@@ -77,7 +77,7 @@ def build_card(domain: str, info: dict, version: str = "1.0.0") -> dict:
         "@context": "https://json-ld.org/contexts/person.jsonld",
         "object": "AgentCard",
         "name": name,
-        "description": desc or f"Agente especialista {domain} da plataforma de agents da LigaCommerce.",
+        "description": desc or f"Agente especialista {domain} da plataforma Agent-OS.",
         "url": f"{BASE_URL}/{domain}",
         "provider": PROVIDER,
         "version": version,
@@ -110,7 +110,7 @@ def write_cards(out_dir: Path, domains: dict) -> tuple:
         target.write_text(json.dumps(card, indent=2, ensure_ascii=False), encoding="utf-8")
         cards.append(card)
     index = {
-        "index": "A2A Agent Cards — LigaCommerce",
+        "index": "A2A Agent Cards — Agent-OS",
         "count": len(cards),
         "generatedAt": datetime.now().isoformat(),
         "agents": [

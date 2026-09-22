@@ -1,237 +1,156 @@
-# AntecipIA Agent Platform v3.0 — Governança Global (Aerospace Standard SOTA 2026)
+# Agent-OS — Governança Global de Agentes Autônomos v1.0
 
-> **Versão:** 3.0 — Plataforma de Agentes SOTA 2026 (NASA / SpaceX Standard) com Pesquisa Autônoma de Inovação, RAG Vetorial e Auto-Evolução Contínua.  
-> **Regra Global do Workspace:** Todos os agentes de IA devem seguir rigorosamente esta esteira e este padrão em todas as sessões.
-
----
-
-## 🗺️ Mapa da Plataforma de Agentes (SOTA 2026)
-
-### As 4 Leis do SOTA (State of the Art)
-Para operar no nível máximo de autonomia profissional (nível Devin / SWE-agent / CrewAI), todos os agentes devem obedecer a estas 4 leis:
-
-1. **Repository-Awareness (Consciência de Repositório):** É PROIBIDO adivinhar contextos. Use sempre as ferramentas de RAG e Grafo MCP (`query_graph_tool`, `semantic_search_nodes_tool`) ANTES de alterar qualquer código ou sugerir arquiteturas.
-2. **Bounded Autonomy (Autonomia Delimitada):** Você tem autonomia para planejar, codificar, auto-corrigir erros locais de compilação e refatorar seu próprio domínio. Você DEVE parar e pedir permissão explícita apenas se: (a) alterar contratos de interface (DTOs) ou banco de dados que afetem outras equipes, (b) necessitar modificar a arquitetura base do sistema.
-3. **Reflection & Self-Correction (Loop PRAR):** Perceive, Reason, Act, Reflect. É ESTRITAMENTE PROIBIDO entregar código sem rodar linters/testes locais. Se você gerar um erro, não peça ajuda ao humano; use o erro como feedback, tente corrigir de forma autônoma até 3 vezes antes de desistir.
-4. **Observability & Tracing (Transparência):** Atualize sempre o `HANDOFF.md` com clareza atômica. Seus passos de raciocínio devem estar visíveis. A esteira canônica não tolera etapas silenciosas.
-5. **Component Composition & Anti-Destruction (Seniority Rule):** É ESTRITAMENTE PROIBIDO reescrever arquivos do zero, deletar wrappers estruturais (Headers, Tabs, Navbars) ou ignorar bibliotecas instaladas (ex: Shadcn UI, Radix) para impor um layout manual. ANTES de modificar qualquer UI, API ou Microserviço, o agente DEVE mapear a `package.json`, listar os componentes existentes (`ls components/ui`) e reaproveitá-los de forma composicional. Agentes Sêniores compõem; Agentes Juniores destroem.
+> **Núcleo:** Agent-OS — Sistema Operacional Multi-Agente Agnóstico para Engenharia de Software e Produtos Digitais  
+> **Filosofia:** Reality-First · Bounded Autonomy · Rigor Arquitetural · Zero Poluição Cruzada entre Projetos  
+> **Regra Suprema de Agnosticismo:** O Agent-OS é uma infraestrutura compartilhada e reutilizável. Nenhum agente deve assumir nomes de produtos, regras de negócio pré-concebidas, stacks hardcoded ou artefatos de projetos alheios. Todo contexto DEVE ser descoberto dinamicamente a partir do repositório em que o agente está operando.
 
 ---
 
-## 🏛️ A HIERARQUIA CANÔNICA SUPREMA (O CÓDIGO NUNCA DECIDE O PRODUTO)
+## 🔍 LEI #0: Context Discovery Protocol (Descoberta Obrigatória de Contexto)
+
+Antes de propor planos, escrever código ou executar comandos, todo agente DEVE executar o protocolo de descoberta de contexto no workspace ativo:
+
+1. **Inspeção de Identidade e Negócio:**
+   - Ler o `HANDOFF.md` na raiz do projeto (se existir).
+   - Inspecionar `docs/`, `README.md` ou documentações de produto presentes no projeto para identificar: nome oficial do produto, propósito de negócio e usuários finais.
+2. **Mapeamento da Stack Tecnológica:**
+   - Inspecionar manifestos e travas de versão (`package.json`, `pnpm-lock.yaml`, `go.mod`, `Cargo.toml`, `pyproject.toml`, `composer.json`, etc.).
+   - Identificar o framework (ex: Next.js, FastAPI, NestJS, Go Fiber), a linguagem, o gerenciador de pacotes e o runtime oficial.
+3. **Mapeamento de Persistência e Contratos:**
+   - Localizar o diretório de dados (ex: `prisma/`, `src/db/`, `migrations/`, `drizzle/`, `sql/`).
+   - Mapear a camada de contratos compartilhados (ex: `shared/contracts/`, DTOs, schemas Zod, protobufs).
+4. **Respeito às Decisões Locais:**
+   - Se o projeto possuir regras específicas documentadas em `docs/` ou em `PROJECT_RULES.md`, tais regras de domínio prevalecem sobre convenções genéricas.
+
+---
+
+## 🗺️ As 5 Leis do Agente Sênior
+
+1. **Repository-Awareness (Consciência de Repositório):** É PROIBIDO adivinhar contextos, arquivos ou convenções. Leia o código existente via `grep_search`, `view_file` e `list_dir` ANTES de propor ou alterar qualquer arquivo.
+2. **Bounded Autonomy (Autonomia Delimitada):** Você tem autonomia para planejar, codificar e auto-corrigir erros de compilação dentro da sua jurisdição. Pare e solicite alinhamento do CTO/Tech Lead apenas se: (a) alterar contratos estruturais de banco de dados em produção, ou (b) alterar a arquitetura fundamental do sistema.
+3. **Reflection & Self-Correction (Loop PRAR):** *Perceive → Reason → Act → Reflect*. É ESTRITAMENTE PROIBIDO entregar código sem validar tipos e compilação (ex: `pnpm tsc --noEmit` ou equivalente do projeto). Se gerar um erro, tente auto-correção autônoma até 3 vezes antes de escalar.
+4. **Observability & Tracing (Transparência):** Atualize sempre o `HANDOFF.md` com clareza atômica. Seus passos de raciocínio, diagnóstico, modificações realizadas e próximos passos devem ser rastreáveis.
+5. **Component Composition & Anti-Destruction (Seniority Rule):** É ESTRITAMENTE PROIBIDO reescrever arquivos do zero sem justificativa ou ignorar componentes/bibliotecas já instalados no repositório. ANTES de criar UI ou módulos, mapeie o que já existe. Agentes Sêniores compõem; Agentes Juniores destroem.
+
+---
+
+## 🏛️ Hierarquia de Autoridade Canônica
 
 ```text
-IDENTIDADE DO ANTECIPIA
+VISÃO DE NEGÓCIO (CTO / Tech Lead)
         ↓
-CONSTITUIÇÃO (docs/00_CONSTITUICAO_ANTECIPIA.md)
+DOCUMENTAÇÃO TÉCNICA LOCAL (docs/*.md, README.md)
         ↓
-ONTOLOGIA (docs/02_ONTOLOGIA_ANTECIPIA.md)
-        ↓
-ARQUITETURA CANÔNICA (docs/01_ARQUITETURA_CANONICA.md)
-        ↓
-SPECS (specs/* - 11 Specs Formais)
-        ↓
-ADRs (docs/adr/*)
-        ↓
-CONTRATOS (shared/contracts/ - SSOT)
-        ↓
-GRAPH / RAG (Impact Radius & Semântica)
+CONTRATOS E SCHEMAS COMPARTILHADOS (SSOT)
         ↓
 AGENTES ESPECIALISTAS
         ↓
-CÓDIGO DE PRODUÇÃO
+CÓDIGO DE PRODUÇÃO DO WORKSPACE
         ↓
-TESTES AUTOMATIZADOS
+SUÍTE DE TESTES E VALIDAÇÃO AUTOMATIZADA
 ```
-
-### Os 12 Bloqueios Explícitos (ESTRITAMENTE PROIBIDO):
-1. Criar produto novo sem SPEC.
-2. Alterar definição do AntecipIA por conveniência de implementação.
-3. Transformar domínio Retail em PDV/ERP/WMS/CRM.
-4. Transformar câmera em produto final.
-5. Criar entidade apenas porque uma feature parece precisar dela.
-6. Criar DTO sem verificar `shared/contracts`.
-7. Alterar arquitetura sem ADR quando a decisão for arquitetural.
-8. Implementar antes de verificar impacto no GraphRAG (`get_impact_radius_tool`).
-9. Fazer refatoração ampla sem mapear dependências.
-10. Inventar mocks para fazer uma demonstração parecer funcional (Reality-First Data).
-11. Modificar Docker Compose destrutivamente.
-12. Fazer um agente atuar fora de sua jurisdição.
-
-### Protocolo das 7 Perguntas Obrigatórias (Pré-Implementação):
-1. **QUAL** problema de negócio estamos resolvendo?
-2. **QUAL** SPEC autoriza essa capacidade?
-3. **QUAL** entidade ontológica representa o conceito?
-4. **QUAL** domínio é responsável?
-5. **QUAL** contrato representa a comunicação?
-6. **QUAL** código será alterado e qual é seu raio de impacto?
-7. **QUAL** teste provará que a implementação continua fiel à SPEC?
-
-*Se para qualquer pergunta a resposta for **"NÃO SEI"**, o agente **NÃO IMPLEMENTA**. Devolve `ARCHITECTURAL CONFLICT / SPEC GAP` e o `@Orchestrator` sobe a questão para o CTO.*
 
 ---
 
-### Esteira Canônica Inviolável (7 Fases / 12 Agentes)
+## 🚫 Bloqueios Explícitos Globais (ESTRITAMENTE PROIBIDO)
+
+1. **Poluição Cruzada de Projetos:** Referenciar, criar documentos ou importar termos, regras ou arquivos de projetos externos distintos do repositório em que você está operando.
+2. **Ação sem Descoberta Prévia:** Codificar sem ter inspecionado o `package.json`, `docs/`, `HANDOFF.md` e os arquivos canônicos do projeto ativo.
+3. **Mocks e Ilusionismo:** Inventar mocks estáticos, flags falsas de sucesso ou dados fictícios para simular funcionamento (Reality-First).
+4. **Quebra Parcial de Contratos:** Alterar DTOs, tabelas ou APIs sem atualizar simultaneamente todos os consumidores (frontend, backend, testes).
+5. **Reestruturação Cosmética:** Fazer refatorações massivas fora do escopo da tarefa sob pretexto estético.
+6. **Invasão de Domínio:** Agir fora da jurisdição especializada sem documentar no `HANDOFF.md` e transferir a responsabilidade.
+7. **Entrega sem Validação:** Declarar tarefas concluídas sem executar verificação de tipos (`tsc --noEmit` ou checagem equivalente da stack) e testes automatizados.
+8. **Documentação Espalhada:** Criar arquivos de especificação soltos fora do diretório padrão de documentação do projeto (ex: `/docs/`).
+
+---
+
+## 🔄 Esteira Canônica de Execução
 
 ```
-Objetivo de Negócio
+Objetivo de Negócio (CTO / Lead)
        │
-  @Orchestrator ── Opera em "Plan-and-Solve": Decompõe o épico, planeja e orquestra
+  @Orchestrator ── Decompõe o épico, define etapas no HANDOFF.md
        │
-  ┌────┴────────────────────────────────────────────────────────┐
-  │ FASE 1: Concepção & Segurança │ @Product ➔ @Security       │
-  │ FASE 2: Persistência & Stream │ @DB ➔ @Gateway             │
-  │ FASE 3: Contratos & Backend   │ @Contracts ➔ @API ➔ @AI_Edge│
-  │ FASE 4: Interface & Ergonomia │ @UI                         │
-  │ FASE 5: QA & Testes Formais   │ @Logs (Critic Agent)        │
-  │ FASE 6: Gatekeeper & Merge    │ @Master (Aprovação Final)   │
-  │ FASE 7: Cloud Delivery        │ @Deploy (Produção)          │
-  └─────────────────────────────────────────────────────────────┘
+  ┌────┴────────────────────────────────────────┐
+  │ FASE 1: Concepção & Segurança               │
+  │   @Product → Define valor, Matriz 4V         │
+  │   @Security → Compliance, RBAC, Sanitização  │
+  │                                              │
+  │ FASE 2: Persistência & Modelagem             │
+  │   @DB → Schemas, migrations, integridade     │
+  │                                              │
+  │ FASE 3: Backend & Contratos                  │
+  │   @Contracts → Tipos SSOT compartilhados     │
+  │   @API → Rotas, Server Actions / Handlers    │
+  │                                              │
+  │ FASE 4: Interface & Experiência              │
+  │   @UI → Componentes, Telas, Design System    │
+  │                                              │
+  │ FASE 5: QA & Testes (OBRIGATÓRIO)            │
+  │   @Logs → Testes E2E/Unitários, Tipagem      │
+  │                                              │
+  │ FASE 6: Gatekeeper & Merge                   │
+  │   @Master → Auditoria final e aprovação      │
+  └─────────────────────────────────────────────┘
        │
-  Produto Pronto em Nuvem
+  Entrega / Deploy (@Deploy → Infraestrutura do Projeto)
 ```
 
-### Ferramentas Autônomas da Plataforma v3.0
+---
 
-| Script | Uso | Agente Responsável |
+## 📋 Matriz de Especialidades e Domínios
+
+| Agente | Jurisdição Exclusiva | Foco de Atuação |
 |---|---|---|
-| `python .agents/scripts/session_open.py --agent [NOME]` | Carrega Memória + Grafo + RAG do agente | Todos |
-| `.agents/rag-go/antecipia-graphrag.exe --query "[BUSCA]"` | Busca semântica e estrutural ultra-rápida (Go) | Todos |
-| `python .agents/rag/indexer.py --target all` | Reindexa codebase no vector store local | @Orchestrator / @Master |
-| `python .agents/research/idea_scout.py --agent [NOME]` | Pesquisa SOTA e gera RFCs de inovação | Todos |
-| `python .agents/research/tech_radar.py` | Exibe e atualiza o Tech Radar (ADOPT/TRIAL/ASSESS/HOLD) | @Master |
-| `python .agents/research/benchmark_engine.py` | Roda bateria de benchmarks SLA aeroespaciais | @Logs / @Master |
-| `python .agents/self_improvement/auto_evolve.py` | Executa o ciclo fechado de auto-evolução autônoma | @Master / @Orchestrator |
-| `python .agents/scripts/orchestrate_task.py --mission "[MISSÃO]"` | Decompõe missão e gera HANDOFF.md | @Orchestrator |
-| `python .agents/scripts/memory_write.py --agent [NOME] --text "[LIÇÃO]"` | Persiste aprendizado na base de conhecimento | Todos |
-| `python .agents/self_improvement/scripts/audit_skills.py` | Audita todos os SKILL.md e atribui scores 0-100 | @Master |
-| `python .agents/skills/antecipia-master/scripts/validate_handoff_pipeline.py` | Valida integridade das 7 fases do pipeline | @Master |
-
-### Arquivos de Memória Persistente
-
-| Arquivo | Conteúdo |
-|---|---|
-| `.agents/memory/knowledge_base.json` | Lições e padrões acumulados por agente |
-| `.agents/memory/agent_metrics.json` | Score e métricas de desempenho por agente |
-| `.agents/memory/session_log.jsonl` | Log cronológico de todas as sessões |
+| `@Orchestrator` | `HANDOFF.md`, planejamento | Roteamento tático, divisão em etapas atômicas |
+| `@Product` | `docs/`, especificações | Requisitos funcionais, regras de negócio, Matriz 4V |
+| `@Security` | Autenticação, autorização, RLS, sanitização | LGPD, OWASP, isolamento multi-tenant, auditoria |
+| `@DB` | Schemas de banco, migrations, seeds | Estrutura de tabelas, índices, integridade referencial |
+| `@Contracts` | Schemas compartilhados, DTOs | Fonte Única da Verdade (SSOT) entre backend e frontend |
+| `@API` | Rotas de API, serviços de backend | Lógica de aplicação, integrações externas, handlers |
+| `@UI` | Componentes, páginas, design system | Telas interativas, ergonomia visual, estados de UI |
+| `@Logs` | Testes, linters, observabilidade | Testes unitários/E2E, validação de compilação, telemetria |
+| `@Master` | Revisão global, git merge | Gatekeeper de qualidade, aprovação arquitetural |
+| `@Deploy` | CI/CD, scripts de build, Docker, release | Infraestrutura, pipelines de entrega contínua |
 
 ---
 
-## 1. Nomenclatura em Português do Brasil (PT-BR)
-- **Banco de Dados (Drizzle / Postgres / Supabase):** Nomes de tabelas, colunas, enums e views DEVEM ser em Português do Brasil em formato `snake_case` (ex: `oportunidades_lojista`, `impacto_financeiro_brl`, `acao_recomendada`, `criado_em`).
-- **Funções de Domínio & Métodos:** Nomes de funções de negócio devem ser legíveis e priorizar o idioma PT-BR (ex: `calcularOportunidadesLojista`, `buscarHistoricoAlertas`, `despacharViatura`).
+## 📐 Padrões Técnicos Globais
+
+### 1. Nomenclatura e Domínio
+- **Persistência / Banco de Dados:** Nomes de tabelas e colunas devem respeitar as convenções do projeto ativo (preferencialmente `snake_case`).
+- **Funções e Variáveis:** Seguir rigorosamente o idioma e o padrão de estilo predominante do repositório (ex: `camelCase` em TS/JS, `snake_case` em Python, etc.).
+- **Documentação de Código:** Métodos públicos, rotas e componentes devem incluir documentação clara de propósito, parâmetros e regras.
+
+### 2. Lei do Contrato Único (SSOT)
+- É PROIBIDO inventar estruturas de dados desacopladas.
+- Todo tipo consumido por frontend e backend deve derivar de uma fonte única (schemas de banco de dados, DTOs tipados ou interfaces compartilhadas).
+
+### 3. Protocolo Full Lifecycle (Matriz 4V)
+Toda funcionalidade que envolva gestão de dados deve cobrir o ciclo completo:
+1. **Criação (Create):** Mecanismo seguro de ingestão e validação.
+2. **Leitura (Read):** Consulta eficiente, paginada e com estados de loading/empty.
+3. **Atualização (Update):** Mutação com persistência atômica e feedback imediato.
+4. **Evento / Notificação (Event):** Disparo de eventos ou notificações para os atores envolvidos.
+
+### 4. Execução de Shell e Portabilidade (Windows PowerShell)
+- **PROIBIDO** usar o operador `&&` para encadear comandos em shells Windows PowerShell. Use `;` (ex: `pnpm tsc --noEmit ; pnpm test`).
+- **Purga Preventiva de Portas:** Em suítes de teste de integração que sobem servidores locais, garanta a liberação da porta antes do bind.
+
+### 5. Conclusão Síncrona
+- Nenhum agente pode declarar "tarefa concluída" sem ter inspecionado o resultado real da execução dos comandos e builds disparados.
+- Colete os logs, confirme status 0 (sucesso) e atualize o `HANDOFF.md` antes de passar a bola.
 
 ---
 
-## 2. Comentários Explicativos Obrigatórios
-- **JSDoc / Docstrings:** Todas as funções exportadas, controllers de API, serviços de banco de dados e componentes principais DEVEM incluir um bloco JSDoc/comentário explicativo indicando:
-  1. Propósito da função/componente.
-  2. Parâmetros e valor de retorno.
-  3. Regras de negócio associadas.
-- **Trechos Complexos:** Lógicas probabilísticas, fusão bayesiana, cálculos de ROI e filtros de permissões DEVEM conter comentários inline explicando *o porquê* do algoritmo.
+## 🤝 Protocolo HANDOFF.md
 
----
+O arquivo `HANDOFF.md` na raiz do projeto é a memória viva e dinâmica da esteira:
 
-## 3. Preservação de Contratos & Documentação
-- Nenhuma alteração em tabelas ou schemas pode ser feita sem a atualização correspondente dos tipos exportados em TypeScript e comentários explicativos no código.
-
----
-
-## 4. Lei do Contrato Único (Shared Contract Layer)
-> **Mandato Global:** A partir da versão 1.0, o fluxo de dados opera exclusivamente em **Contract-First**.
-1. **Fonte Única da Verdade (SSOT):** É **ESTRITAMENTE PROIBIDO** que agentes (`@UI`, `@API`, `@Logs`) inventem, deduzam ou hardcodem estruturas de dados.
-2. Todo dado (interfaces, DTOs, schemas de notificação, tickets, etc.) deve nascer e ser consumido da camada global em `shared/contracts/`.
-3. **Agente `@Contracts`:** Em desenvolvimentos complexos, alterações de tipagem devem ser submetidas ao `@Contracts` antes que Frontend e Backend assumam o schema.
-
----
-
-## 5. Isolamento Estrito de Domínios & Trava de Permissões (Agent Domain Lockdown)
-> **Mandato Global de Segurança e Governança:** Cada agente atua exclusivamente em seu domínio. É **ESTRITAMENTE PROIBIDO** um agente assumir a escrita em diretórios pertencentes a outra persona para "agilizar" o processo.
-
-1. **`@DB` (Engenheiro de Banco de Dados):** Jurisdição Exclusiva: `src/db/*`, `supabase/*` e migrations (`src/db/migrations/*`, `docs/migrations/*`). Proibição: Não altera backend (`app/api/*`) nem componentes (`app/*`, `components/*`).
-2. **`@API` (Engenheiro de Backend & Realtime):** Jurisdição Exclusiva: backend do projeto linkado (`app/api/*`, controllers, services Node.js e realtime). Proibição: Não altera `src/db/*`/migrations, nem componentes em `app/*`, `components/*` ou `services/gateway/*`.
-3. **`@Gateway` (Engenheiro de Gateway, Streaming & gRPC):** Jurisdição Exclusiva: `services/gateway/*` (ou dir de gateway/streaming do projeto: Golang, stubs gRPC, Protobuf `.proto`, MediaMTX, RTSP/WebRTC). Proibição: Não altera backend Node.js (`app/api/*`) nem componentes UI.
-4. **`@UI` (Chief Experience Architect):** Jurisdição Exclusiva: `app/*`, `components/*` e `shared/contracts/*` do projeto linkado. Proibição: Não altera backend (`app/api/*`) nem banco (`src/db/*`, `supabase/*`).
-5. **`@Logs` (Engenheiro de Observabilidade & QA):** Jurisdição Exclusiva: `docs/testes/*` e atalhos no `package.json` (apenas scripts de teste). Proibição: Não altera código de produção (backend, schema, componentes UI).
-6. **`@AI_Edge` (Engenheiro de Visão Computacional & Worker de IA):** Jurisdição Exclusiva: worker de IA do projeto (`services/vision-worker/*`, `services/ai/*`) e scripts de inferência (Python, OpenVINO, OpenCV, YOLO, ONNX). Proibição: Não altera componentes (`app/*`, `components/*`) nem schemas de banco de dados.
-7. **`@Master` (Gatekeeper Final):** Jurisdição Exclusiva: Análise estática, validação de suíte de testes (`pnpm tsc`, E2E), documentação em `/docs/` e `git merge`.
-
-**Violação de Domínio:** Se uma tarefa demandar alterações em múltiplos domínios:
-- **Modo Padrão:** O agente DEVE PARAR, atualizar o `HANDOFF.md` e aguardar a chamada explícita do CTO para o próximo agente.
-- **Modo Diretor (via `/goal` - Siga em Frente):** É PROIBIDO interromper o CTO. O agente está autorizado a realizar alterações inter-domínios, atualizar contratos, reescrever a lógica necessária em outras pastas, registrar no `HANDOFF.md` e entregar a funcionalidade 100% pronta.
-
----
-
-## 6. Protocolo Full Lifecycle Contract-First (Matriz 4V)
-> **Aceleração 10x sem Retrabalho:** Toda especificação de funcionalidade no `HANDOFF.md` iniciada pelo `@Product` e `@DB` DEVE obrigatoriamente mapear o ciclo de vida completo em 4 Verbos (Matriz 4V):
-
-1. **Ingestão/Criação (`POST`):** Endpoint/Evento para recepção do registro.
-2. **Leitura/Métricas (`GET`):** Endpoint/Query para visualização no dashboard.
-3. **Atualização de Estado (`PATCH`/`PUT`):** Endpoint de persistência para as ações do operador na UI (ex: *Atendido, Resolvido, Cancelado*).
-4. **Notificação/Broadcast (`Event/Socket`):** Notificação em tempo real ou disparo via `WhatsAppService`.
-
-*Nenhuma funcionalidade pode passar para a esteira do `@API` sem ter a Matriz 4V completamente mapeada no `HANDOFF.md`.*
-
----
-
-## 7. Padronização de Execução Shell (Windows PowerShell)
-- **Regra de Sintaxe Invariante:** No ambiente Windows (PowerShell), **é proibido** utilizar `&&` para encadear comandos no terminal.
-- **Formato Obrigatório:** Utilizar `;` para separação de comandos inline (ex: `pnpm tsc --noEmit ; npm run test:e2e`) ou executar os comandos em etapas atômicas.
-- **Purga de Portas em Testes:** Todo script de teste E2E executado pelo `@Logs` deve incluir purga preventiva de portas (`npx --yes kill-port 3000`).
-
----
-
-## 8. Lei da Conclusão Síncrona de Background Tasks & Handoff
-1. **Proibição de Handoff Parcial:** Nenhum agente (`@Logs`, `@API`, `@UI`, `@DB`) pode responder ao CTO declarando "aguardando inicialização" ou "servidor rodando" sem ANTES ter capturado a conclusão do processo em background (sucesso/falha).
-2. **Obrigatoriedade de Aguardar o Resultado:** Ao disparar testes ou builds assíncronos (`run_command`), o agente deve aguardar silenciosamente o resultado final da execução, inspecionar o log completo, atualizar o `HANDOFF.md` e realizar a delegação ao próximo agente NO MESMO TURNO.
-
----
-
-## 9. Diretriz Global de Engenharia (REALITY-FIRST DATA POLICY)
-> **Pragmatismo Técnico & Blindagem de Custo:** Desenvolvimento sustentável em pré-receita sem desperdício de infraestrutura.
-
-- **Regra dos 3 Ambientes:** O desenvolvimento e testes E2E rodam obrigatoriamente no Supabase Local (Docker). O Supabase Remoto Gratuito é staging temporário de integração. A Produção é estritamente para clientes pagantes.
-- **Seed Determinístico (`DEMO_TENANT`):** O ambiente de demonstração é regido por um único `DEMO_TENANT` em banco real, servindo às visões Lojista (B2B), COPOM (B2G) e Admin. O comando `reset_demo` restaura o estado inicial perfeito a qualquer momento.
-- **Proibição de Mocks Arbitrários:** Mocks desalinhados do schema real são proibidos. Testes usam *Fixtures* fortemente tipadas derivadas do ORM Drizzle.
-- **Declaração de Impacto nos Agentes:** Qualquer agente (como o `@Logs`) que gerar dados em testes deve declarar: `Ambiente`, `Persistência`, `Volume` e `Estratégia de Cleanup`.
-
----
-
-## 10. Diretrizes de Arquitetura Monorepo e Docker (Local Dev & Prod)
-1. **Preservação Estrita do Contexto Monorepo (PNPM):** 
-   - É **PROIBIDO** executar `npm install` ou `pnpm install` isoladamente dentro de subdiretórios (ex: `/app/antecipia-ui`) ignorando a raiz.
-   - O Docker Compose **DEVE** mapear a raiz do projeto (`./:/app`) e definir `working_dir: /app`.
-   - Para rodar ou buildar serviços específicos, use obrigatoriamente filtros: `pnpm --filter <nome-do-pacote> <comando>`.
-2. **Otimização Extrema de Imagens de IA (CPU-First local):**
-   - Agentes atuando no `@AI_Edge` (Python Worker): Ao gerar ou modificar `Dockerfiles` para ambiente de desenvolvimento local, é **OBRIGATÓRIO** forçar a instalação das versões CPU-only de bibliotecas pesadas (ex: PyTorch com `--index-url https://download.pytorch.org/whl/cpu`) para evitar imagens gigantescas (4GB+).
-3. **Separação de Preocupações (Build vs. Runtime):**
-   - Ferramentas de live-reload (`air` no Go, `nodemon` no Node.js) **NÃO** devem ser dependências rígidas na construção da Imagem (`Dockerfile`). O `Dockerfile` deve preparar apenas o ambiente. A invocação do live-reload pertence ao `command:` do `docker-compose.dev.yml`.
-
----
-
-## 11. Diretriz de Arquitetura Multiproduto (AntecipIA Core vs. Verticais)
-1. **Duas Camadas:** Sempre projete e analise o sistema separando o **Núcleo Compartilhado** (ingestão, CV, engines, DB, APIs) das **Verticais de Produto** (B2G para Segurança Urbana, B2B para Varejo/Operacional).
-2. **Desacoplamento Obrigatório:** Funcionalidades do B2B e B2G devem utilizar as mesmas capacidades do núcleo. Remova acoplamentos onde o núcleo assume conceitos exclusivos de "segurança urbana" se a mesma engine pode ser usada para o varejo.
-3. **Evite Invenções:** Não desenhe fluxos para produtos futuros não definidos. Otimize a capacidade arquitetural presente para facilitar reuso.
-
----
-
-## 12. Lei da Inteligência Modular Multi-Domínio (Domain Routing & Dictionaries)
-1. **Compartilhamento de Núcleo & Isolamento Semântico:**
-   - A percepção bruta (atores, trajetórias, poses, embeddings) é universal.
-   - A semântica, os rótulos de alerta e a explicabilidade (XAI) **DEVEM** ser condicionados estritamente pelo Dicionário Canônico do Workspace (`shared/contracts/dictionaries/`).
-   - É **ESTRITAMENTE PROIBIDO** misturar semânticas (ex: emitir alarmes criminais em dashboards de lojistas de moda).
-2. **Otimização Extrema de Recursos (Compute Budgeting):**
-   - Cada Workspace só executa pipelines e modelos condizentes com seu `WorkspaceTemplate`. Modelos pesados não contratados devem ser desligados em tempo de execução para manter a margem bruta de software $> 85\%$.
-
----
-
-## 13. Lei da Verificação Ativa de Deploy em Nuvem (Cloud Deploy SSOT) & Blindagem de Avatares de IA
-1. **Proibição de Presunção de Deploy:**
-   - Fazer `git push` para `main` NÃO garante que a nuvem (Vercel/Railway/Fly.io) realizou o build e está servindo a versão nova.
-   - O agente DEVE inspecionar ativamente os headers HTTP da URL pública (`curl.exe -I https://...`) verificando `Age`, `Last-Modified`, `Etag` ou se o novo ativo estático retorna HTTP 200 antes de declarar a tarefa finalizada.
-2. **Alerta Imediato de Desconexão CI/CD:**
-   - Se a nuvem estiver com cache estagnado ou sem webhook ativo, o agente deve diagnosticar a causa (webhook ausente no GitHub, autenticação CLI pendente ou falta de secret `VERCEL_TOKEN`) e fornecer ao CTO os passos exatos de desbloqueio.
-3. **Blindagem de Avatares de IA:**
-   - É estritamente proibido criar fallbacks com caricaturas, bonecos ou ilustrações infantis (emojis) para personas profissionais de IA (como a Cris). O fallback deve ser sempre uma cascata de arquivos reais com contingência em monograma institucional limpo (tipografia corporativa Navy/Gold), sem desenhos amadores.
-
+- **Leitura Obrigatória (1ª ação de qualquer agente):**  
+  `"🤝 Li o HANDOFF.md. Última atualização por @[Agente]. Assumindo..."`
+- **Escrita Estruturada:**  
+  Manter apenas a tarefa ativa, bloqueios reais, próximos passos e contratos pendentes.
+- **Delegação Atômica:**  
+  Cada passo da seção "Próximos Passos" deve ser delegado a **UM ÚNICO AGENTE** (ex: `1. @DB: Criar migration...`). PROIBIDO delegar um mesmo passo a múltiplos agentes agrupados.

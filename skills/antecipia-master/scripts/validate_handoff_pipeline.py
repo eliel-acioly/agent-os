@@ -2,8 +2,8 @@
 """
 validate_handoff_pipeline.py
 Script de Auditoria Autônoma executado pelo @Master.
-Valida se o HANDOFF.md respeita a lei do pipeline estreito com todas as 12 personas do AntecipIA:
-@Orchestrator -> (F1: @Product -> @Security) -> (F2: @DB -> @Gateway) -> (F3: @Contracts -> @API -> @AI_Edge) -> (F4: @UI) -> (F5: @Logs) -> (F6: @Master) -> (F7: @Deploy)
+Valida se o HANDOFF.md respeita a esteira canônica de desenvolvimento do Agent-OS:
+@Orchestrator -> (F1: @Product -> @Security) -> (F2: @DB) -> (F3: @Contracts -> @API) -> (F4: @UI) -> (F5: @Logs) -> (F6: @Master) -> (F7: @Deploy)
 """
 
 import sys

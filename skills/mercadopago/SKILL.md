@@ -2,28 +2,33 @@
 name: mercadopago
 description: >-
   Operações, diagnósticos, conciliação e gestão de pagamentos reais via Mercado Pago PIX,
-  integração MCP oficial e local, tratamento de webhooks HMAC e custódia segura na LigaCommerce.
+  integração MCP oficial e local, tratamento de webhooks HMAC e custódia financeira.
 ---
 
 # Skill: Mercado Pago — Pagamentos Reais & Integração MCP
 
-Esta skill governa o ciclo de vida completo de pagamentos, conciliação e transações financeiras da **LigaCommerce** utilizando o ecossistema oficial do **Mercado Pago**.
+Esta skill governa o ciclo de vida de integração, processamento de pagamentos, conciliação e webhooks utilizando o ecossistema oficial do **Mercado Pago** no projeto ativo.
 
 ---
 
-## 🏛️ 1. Arquitetura de Pagamentos LigaCommerce
+## 🔍 Context Discovery Protocol (PRIMEIRO PASSO OBRIGATÓRIO)
 
-1. **Gateway:** Mercado Pago SDK v3 (`mercadopago: ^3.6.0`).
+Antes de executar operações financeiras ou testes de pagamento:
+1. **Identificar Rotas de Pagamento e Webhooks:** Inspecione o repositório para localizar os endpoints de checkout e recepção de webhooks (ex: `/api/payments/mercadopago/webhook`).
+2. **Descobrir Configuração de Credenciais:** Verifique os arquivos `.env` ou `.env.example` para mapear os nomes das variáveis (ex: `MERCADOPAGO_ACCESS_TOKEN`, `MERCADOPAGO_PUBLIC_KEY`, `MERCADOPAGO_WEBHOOK_SECRET`).
+3. **Mapear Regras de Negócio e Taxas:** Inspecione os serviços de monetização ou comissões do projeto para calcular splits ou taxas da plataforma.
+
+---
+
+## 🏛️ 1. Arquitetura Padrão de Pagamentos PIX
+
+1. **SDK / Integração:** Mercado Pago SDK v3 ou chamadas HTTP diretas à API v1.
 2. **Método Principal:** PIX Dinâmico com QR Code em imagem Base64 e Chave Copia e Cola (EMV Standard).
-3. **Validade do PIX:** 30 minutos por cobrança (`date_of_expiration`).
-4. **Liquidação & Split:**
-   - Taxa da plataforma calculada dinamicamente via `calculateMonetization` (ex: 5% a 12% por categoria).
-   - Valor líquido do lojista reservado para repasse.
-5. **Webhook Autoritativo (`POST /api/payments/mercadopago/webhook`):**
-   - Assinatura HMAC SHA-256 no header `x-signature` com proteção anti-replay (janela de tolerância máxima de 10 minutos).
+3. **Validade do PIX:** Tempo determinado por cobrança (`date_of_expiration`).
+4. **Webhook Autoritativo:**
+   - Validação da assinatura HMAC SHA-256 no header `x-signature` com proteção anti-replay.
    - Consulta autoritativa `GET /v1/payments/{id}` no gateway (Zero Trust no payload).
-   - Decremento atômico de estoque via RPC Postgres `decrement_listing_stock`.
-   - Transição idempotente para status `pago`.
+   - Atualização atômica e transição idempotente de status do pedido.
 
 ---
 
@@ -31,54 +36,24 @@ Esta skill governa o ciclo de vida completo de pagamentos, conciliação e trans
 
 | Tipo de Ambiente | Prefixo do Access Token | Prefixo da Public Key | Efeito Prático |
 | :--- | :--- | :--- | :--- |
-| **Sandbox / Homologação** | `TEST-...` | `TEST-...` | Simulação bancária. Dinheiro fictício. Não debita do app do banco. |
-| **Produção Oficial** | `APP_USR-...` | `APP_USR-...` | **Pagamento Real**. O cliente escaneia com o app do banco (Nubank, Itaú, etc.) e o valor é creditado na conta do Mercado Pago. |
+| **Sandbox / Homologação** | `TEST-...` | `TEST-...` | Simulação bancária. Não debita de contas reais. |
+| **Produção Oficial** | `APP_USR-...` | `APP_USR-...` | **Pagamento Real**. O cliente escaneia com o app do banco e o saldo é liquidado na conta do Mercado Pago. |
 
 > [!CAUTION]
-> A aplicação possui trava de isolamento estrito: em `NEXT_PUBLIC_APP_ENV="production"`, o sistema rejeita chaves `TEST-` para evitar que vendas reais sejam registradas com dinheiro fictício.
+> Em ambientes de produção declarada, certifique-se de rejeitar chaves `TEST-` para evitar aprovação de pedidos com pagamentos fictícios.
 
 ---
 
-## 🚀 3. Checklist para Ativação de Pagamentos Reais
+## 🚀 3. Checklist para Ativação de Pagamentos
 
 1. Acesse o painel de desenvolvedores: [Mercado Pago Developers](https://www.mercadopago.com.br/developers/panel).
-2. Selecione a sua aplicação ou crie uma aplicação do tipo *Marketplace / Pagamentos Online*.
-3. Clique em **Credenciais de Produção**:
-   - Copie o **Access Token** (`APP_USR-...`).
-   - Copie a **Public Key** (`APP_USR-...`).
-4. Clique em **Webhooks / Notificações IPN**:
-   - Cadastre a URL: `https://ligacommerce.vercel.app/api/payments/mercadopago/webhook`.
-   - Marque o evento: **Pagamentos** (`payment`).
-   - Copie a **Chave Secreta de Assinatura** (`MERCADOPAGO_WEBHOOK_SECRET`).
-5. Atualize as variáveis no `.env.production` e sincronize com a Vercel:
-   ```bash
-   npx tsx scripts/sync-vercel-env.ts SEU_VERCEL_TOKEN
-   ```
+2. Configure uma aplicação com credenciais correspondentes ao ambiente (Sandbox ou Produção).
+3. Cadastre a URL do Webhook do projeto no painel para o evento `payment`.
+4. Configure a chave secreta de webhook (`MERCADOPAGO_WEBHOOK_SECRET`) e as chaves de acesso no ambiente.
 
 ---
 
-## 🛠️ 4. Servidores MCP Disponíveis
+## 🛠️ 4. Servidores MCP e Ferramentas
 
-### A. Servidor MCP Remoto Oficial do Mercado Pago
-- Endpoint: `https://mcp.mercadopago.com/mcp`
-- Configurado em `.agents/mcp_config.json`.
-- Permite que a IA consulte diretamente a documentação técnica e endpoints oficiais.
-
-### B. Servidor MCP Local LigaCommerce (`scripts/mcp-mercadopago-server.js`)
-- Ferramentas disponíveis:
-  - `mp_check_diagnostic`: Testa conectividade e tipo de chave.
-  - `mp_get_payment`: Consulta status de um pagamento pelo ID.
-  - `mp_create_test_pix`: Emite um PIX de teste para validação.
-  - `mp_simulate_webhook`: Simula o envio de webhook assinado com HMAC SHA-256.
-
----
-
-## 🧪 5. Comandos e Scripts Úteis
-
-```bash
-# Diagnóstico de conectividade e prontidão para pagamentos reais
-npx tsx --env-file=.env.production scripts/test-mercadopago-readiness.ts
-
-# Teste do servidor MCP local via Stdio
-node scripts/mcp-mercadopago-server.js
-```
+- **Servidor MCP Oficial do Mercado Pago:** `https://mcp.mercadopago.com/mcp` para consulta técnica.
+- **Scripts de Diagnóstico Locais:** Se o projeto contiver utilitários em `scripts/` (ex: testes de prontidão e simulação de webhooks), utilize-os para validação.

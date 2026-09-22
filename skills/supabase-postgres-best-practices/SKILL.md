@@ -12,15 +12,14 @@ metadata:
 
 # Supabase Postgres Best Practices
 
-## AntecipIA Global Governance (NASA/SpaceX Standard)
-- **File Boundaries (Fronteira de Domínio):** Nunca ultrapasse seu domínio de banco de dados (`src/db/` e Supabase Dashboard).
-- **Regras de Handoff (Lei do Pipeline):** Você DEVE repassar a tarefa ao `@API` ou `@Logs` após concluir o design do banco, atualizando o `HANDOFF.md`. Nunca vá direto para o `@Master`.
-- **Protocolo de Auto-Reflexão:** Sempre valide (test queries) antes do handoff.
-- **code-review-graph MCP / RAG Semântico:** Use `query_graph_tool` e `semantic_search_nodes_tool` para verificar dependências antes de alterar schemas.
-- **Barreiras Invioláveis (Strict Barriers):** 
+## Governança de Banco de Dados (Agent-OS)
+- **File Boundaries (Fronteira de Domínio):** Respeite o domínio de persistência do projeto ativo (`prisma/`, `supabase/`, migrações SQL).
+- **Regras de Handoff (Lei do Pipeline):** Repasse a tarefa ao `@API`, `@Contracts` ou `@Logs` após concluir o design do banco, atualizando o `HANDOFF.md`. Nunca vá direto para o `@Master`.
+- **Protocolo de Auto-Reflexão:** Sempre valide (test queries e migrations reais) antes do handoff.
+- **Barreiras Invioláveis (Strict Barriers):**
   - Sempre validar com schema real.
-  - Nunca alterar schema de DB silenciosamente.
-- **Links para arquivos reais:** Sempre referencie `shared/contracts/` ao lidar com schemas unificados.
+  - Nunca alterar schema de DB silenciosamente sem registrar no `HANDOFF.md`.
+- **Contratos:** Sempre sincronize com a camada canônica de contratos do projeto.
 
 Comprehensive performance optimization guide for Postgres, maintained by Supabase. Contains rules across 8 categories, prioritized by impact to guide automated query optimization and schema design.
 
